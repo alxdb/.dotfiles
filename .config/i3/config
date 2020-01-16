@@ -1,0 +1,211 @@
+# i3 config file alxdb
+# vim: ft=i3config:
+
+font pango:monospace 10
+
+# System keyboard bindings
+set $mod Mod4
+
+# bindsym XF86AudioRaiseVolume exec "pamixer -i 5"
+# bindsym XF86AudioLowerVolume exec "pamixer -d 5"
+# bindsym XF86AudioMute exec "pamixer -t"
+# 
+# bindsym XF86AudioPlay exec "playerctl play-pause"
+# bindsym XF86AudioNext exec "playerctl next"
+# bindsym XF86AudioPrev exec "playerctl previous"
+# bindsym XF86AudioStop exec "playerctl stop"
+
+# Gaps
+set $inner_gap 20
+set $outer_gap 0
+gaps inner $inner_gap
+gaps outer $outer_gap
+bindsym $mod+g exec --no-startup-id "if [ `i3-msg -t get_tree | grep -Po \
+    '.*\\"gaps\\":{\\"inner\\":\K(-|)[0-9]+(?=.*\\"focused\\":true)'` -eq 0 ]; then \
+        i3-msg gaps inner current set 0 && i3-msg gaps outer current set 0 ; \
+    else \
+        i3-msg gaps inner current set $inner_gap &&  i3-msg gaps outer current set $outer_gap; \
+    fi"
+
+# Colorscheme (gruvbox-dark)
+set $bg		#282828
+set $hbg	#1d2021
+set $sbg	#32302f
+set $bg1	#3c3836
+set $bg2	#504945
+set $fg		#ebdbb2
+set $red	#cc241d
+set $fred	#fb4934
+set $green	#98971a
+set $yellow	#d79921
+set $blue	#458588
+set $fblue	#83a598
+set $purple	#b16286
+set $aqua	#689d68
+set $gray	#a89984
+set $dgray	#928374
+
+# colorclass			border	backg	text	ind		child_b
+client.focused			$fblue	$fblue	$fg		$blue	$fblue
+client.focused_inactive	$sbg	$sbg	$fg		$gray	$sbg
+client.unfocused		$hbg	$hbg	$fg		$dgray	$hbg
+client.urgent			$red	$red	$bg1	$red	$red
+client.background		$bg
+
+set $up k
+set $down j
+set $left h
+set $right l
+
+# use Mouse+$mod to drag floating windows to their wanted position
+floating_modifier $mod
+
+# start a terminal
+bindsym $mod+Return exec i3-sensible-terminal
+bindsym $mod+Mod1+Return exec firefox
+
+# kill focused window
+bindsym $mod+Shift+q kill
+
+# rofi
+bindsym $mod+d exec rofi -show drun
+bindsym $mod+Mod1+d exec rofi -show run
+bindsym $mod+o exec rofi -show window
+# bindsym $mod+Shift+p exec rofi -modi 1pass:rofi-1pass -show 1pass
+
+# change focus
+bindsym $mod+$left focus left
+bindsym $mod+$down focus down
+bindsym $mod+$up focus up
+bindsym $mod+$right focus right
+
+# move focused window
+bindsym $mod+Shift+$left move left
+bindsym $mod+Shift+$down move down
+bindsym $mod+Shift+$up move up
+bindsym $mod+Shift+$right move right
+
+# toggle split direction
+bindsym $mod+t split toggle
+
+# enter fullscreen mode for the focused container
+bindsym $mod+f fullscreen toggle
+
+# change container layout (stacked, tabbed, toggle split)
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+# toggle tiling / floating
+bindsym $mod+Shift+space floating toggle
+
+# change focus between tiling / floating windows
+bindsym $mod+space focus mode_toggle
+
+# focus the parent container
+bindsym $mod+a focus parent
+bindsym $mod+Shift+a focus child
+
+# focus the child container
+#bindsym $mod+d focus child
+
+# move the currently focused window to the scratchpad
+bindsym $mod+Shift+minus move scratchpad
+
+# Show the next scratchpad window or hide the focused scratchpad window.
+# If there are multiple scratchpad windows, this command cycles through them.
+bindsym $mod+minus scratchpad show
+bindsym $mod+c move window position center
+
+# Toggle borders (build that wall! take down that wall!)
+bindsym $mod+b border toggle
+default_border pixel
+
+# switch to workspace
+bindsym $mod+0 workspace number 0
+bindsym $mod+1 workspace number 1
+bindsym $mod+2 workspace number 2
+bindsym $mod+3 workspace number 3
+bindsym $mod+4 workspace number 4
+bindsym $mod+5 workspace number 5
+bindsym $mod+6 workspace number 6
+bindsym $mod+7 workspace number 7
+bindsym $mod+8 workspace number 8
+bindsym $mod+9 workspace number 9
+
+# move focused container to workspace
+bindsym $mod+Shift+0 move container to workspace number 0
+bindsym $mod+Shift+1 move container to workspace number 1
+bindsym $mod+Shift+2 move container to workspace number 2
+bindsym $mod+Shift+3 move container to workspace number 3
+bindsym $mod+Shift+4 move container to workspace number 4
+bindsym $mod+Shift+5 move container to workspace number 5
+bindsym $mod+Shift+6 move container to workspace number 6
+bindsym $mod+Shift+7 move container to workspace number 7
+bindsym $mod+Shift+8 move container to workspace number 8
+bindsym $mod+Shift+9 move container to workspace number 9
+
+# reload the configuration file
+bindsym $mod+Shift+c reload
+# restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
+bindsym $mod+Shift+r restart
+# exit i3 (logs you out of your X session)
+bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'exit i3?' -B 'yes' 'i3-msg exit'"
+# Suspend System
+bindsym $mod+Shift+s exec "systemctl suspend"
+# lock screen
+bindsym $mod+Mod1+l exec "xscreensaver-command -lock"
+
+# resize window (you can also use the mouse for that)
+mode "resize" {
+        # These bindings trigger as soon as you enter the resize mode
+
+        # Pressing left will shrink the window’s width.
+        # Pressing right will grow the window’s width.
+        # Pressing up will shrink the window’s height.
+        # Pressing down will grow the window’s height.
+        bindsym $left       resize shrink width 10 px or 10 ppt
+        bindsym $down       resize grow height 10 px or 10 ppt
+        bindsym $up         resize shrink height 10 px or 10 ppt
+        bindsym $right      resize grow width 10 px or 10 ppt
+
+        # same bindings, but for the arrow keys
+        bindsym Left        resize shrink width 10 px or 10 ppt
+        bindsym Down        resize grow height 10 px or 10 ppt
+        bindsym Up          resize shrink height 10 px or 10 ppt
+        bindsym Right       resize grow width 10 px or 10 ppt
+
+        # back to normal: Enter or Escape or $mod+r
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+        bindsym $mod+r mode "default"
+}
+
+bindsym $mod+r mode "resize"
+
+# Bar Settings
+bindsym $mod+Shift+i bar mode invisible 
+bindsym $mod+Shift+d bar mode dock 
+bar {
+	mode dock 
+	hidden_state hide
+	position top
+	status_command i3blocks
+	colors {
+		background $hbg
+		statusline $fg
+		separator  $bg2
+
+		focused_workspace	$fblue	$fblue	$bg1
+		inactive_workspace	$sbg	$sbg	$fg
+		urgent_workspace	$red	$red	$bg1
+	}
+}
+
+# window specific settings
+for_window [class="purr-data"] floating enable
+for_window [class="Qjackctl" instance="qjackctl" id=73400326] floating enable
+# for_window [class="Spotify" instance="spotify"] floating enable
+# for_window [class="Spotify" instance="spotify"] resize set 2000 2000 
+# for_window [class="Spotify" instance="spotify"] move window position center
+# for_window [class="Spotify" instance="spotify"] move scratchpad scratchpad show
