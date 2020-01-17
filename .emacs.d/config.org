@@ -1,4 +1,7 @@
 #+TITLE: alxdb's Emacs Config
+#+AUTHOR: alxdb
+
+#+PROPERTY: header-args :results silent
 
 * Base Settings
 Modifying the default behaviour of Emacs.
@@ -242,6 +245,16 @@ low. We can increase it. We have the technology.
     (fill-column 80))
 #+END_SRC
 
+*** Keybinding to edit config
+I'm going to edit this file a lot, it would be convenient to have a keybinding to open it.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package emacs
+    :bind ("C-x c" . (lambda ()
+                       (interactive)
+                       (find-file "~/.emacs.d/config.org"))))
+#+END_SRC
+
 ** Org-mode
 Org mode is great, here are some tweaks.
 
@@ -397,8 +410,19 @@ First of all, I install the major mode.
     :ensure t)
 #+END_SRC
 
+*** Clojure
+Cider's all you need.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package cider
+    :ensure t)
+#+END_SRC
+
+#+RESULTS:
+
 *** Markdown
-Org mode is infinitely better, but sometimes practicality wins.
+It's everywhere.
+
 #+BEGIN_SRC emacs-lisp
   (use-package markdown-mode
     :ensure t)
@@ -427,9 +451,10 @@ Lord forgive me, for I have sinned.
 I've tried using the emacs keybindings for a little bit now, and while I am able
 to edit text somewhat efficiently, I know vim keybindings much better, and I
 think they are a bit more powerful. However, I don't want to try and replace
-every system in emacs with vim style keybindings since, Emacs is still
-Emacs. Instead I will make the default evil state the ~emacs~ state, then for
-certain modes, make ~normal~ the inital state.
+every system in emacs with vim style keybindings since, Emacs is still Emacs
+(additionally, in certain scenarios, like command lines, Emacs keybindings are
+more appropriate). Instead I will make the default evil state the ~emacs~ state,
+then for certain modes, make ~normal~ the inital state.
 
 #+BEGIN_SRC emacs-lisp
   (use-package evil
@@ -441,6 +466,13 @@ certain modes, make ~normal~ the inital state.
     (evil-set-initial-state 'org-mode 'normal))
 #+END_SRC
 
+*** Unbindings
+Some vim keybindings mess with emacs defaults or other packages. This is where I
+remove those.
 
-
+#+BEGIN_SRC emacs-lisp
+  (use-package evil
+    :bind (:map evil-normal-state-map
+                ("M-." . nil)))
+#+END_SRC
 
