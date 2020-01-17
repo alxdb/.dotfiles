@@ -1,0 +1,437 @@
+#+TITLE: alxdb's Emacs Config
+
+* Base Settings
+Modifying the default behaviour of Emacs.
+
+** Use-Package
+Package to manage packages.
+https://github.com/jwiegley/use-package
+
+*** Bootstrap Use-Package
+All settings are configured within =use-package= declarations. ~:ensure t~ is
+used for external packages, built-in packages do not use this.  Settings which
+are not part of any specific package, use the special use-package declaration
+=use-package emacs=.
+
+#+BEGIN_SRC emacs-lisp
+  (unless (package-installed-p 'use-package)
+    (package-refresh-contents)
+    (package-install 'use-package))
+  (eval-when-compile
+    (require 'use-package))
+#+END_SRC
+
+*** Delight
+Some active modes are displayed in the modeline as "lighters". The =delight=
+package allows for editing these lighters. =use-package= also has a special
+~:delight~ tag for editing these.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package delight
+    :ensure t
+    :after use-package)
+#+END_SRC
+
+** Cleanup Emacs File Barf
+By default Emacs creates a lot of files everywhere, we want to reign that in.
+
+*** Seperate File for Customizations
+By default, customizations are put into =init.el=. Putting customizations into
+a seperate file allows them to be independent of version control, and also
+prevents cluttering the =init.el= file.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package emacs
+    :custom
+    (custom-file (concat user-emacs-directory "custom.el"))
+    :config
+    (unless (file-exists-p custom-file)
+      (with-temp-buffer
+	(insert ";; custom.el")
+	(write-file custom-file nil)))
+    (load custom-file))
+#+END_SRC
+
+*** Backup Files
+Instead of cluttering up working directories with files, use a specific
+directory to store autosave files. Also force copying of autosave files
+rather than symlinking them, and a few other autosave options.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package emacs
+    :custom
+    (backup-by-copying t)
+    (version-control t)
+    (backup-directory-alist
+     `((".*" . ,(concat user-emacs-directory "backup-files"))))
+    (delete-old-versions t)
+    (kept-new-versions 2)
+    (kept-old-versions 2))
+#+END_SRC
+
+*** Auto-Save Files
+Same thing for auto-saved files as for backup files, don't clutter my
+directories with =#filename.foo#= etc.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package emacs
+    :custom
+    (auto-save-file-name-transforms
+     `((".*" ,(concat user-emacs-directory "auto-save") t))))
+#+END_SRC
+
+** Visuals
+Make Emacs look pretty.
+
+*** Clean GUI
+Make Emacs GUI nice and clean by removing all the GTK elements.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package emacs
+    :custom
+    (use-dialog-box nil)
+    (inhibit-startup-screen t)
+    (initial-scratch-message nil)
+    (menu-bar-mode nil)
+    (tool-bar-mode nil)
+    :config
+    (set-scroll-bar-mode nil))
+#+END_SRC
+
+*** Theme
+Gruvbox is the best theme so I'll install that. At the moment I'm liking the
+hard dark theme.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package gruvbox-theme
+    :ensure t
+    :config
+    (load-theme 'gruvbox-dark-hard))
+#+END_SRC
+
+*** Font
+Why Emacs doesn't just use the standard monospace font, I don't know. Let's make
+it do that.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package emacs
+    :config
+    (set-face-attribute 'default nil
+			:family "Monospace"
+			:height 90))
+#+END_SRC
+
+*** Spaceline
+The default Emacs modeline is kinda gross. Let's fix that.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package spaceline
+    :ensure t)
+  (use-package spaceline-config
+    :config
+    (spaceline-spacemacs-theme)
+    (set-face-attribute 'powerline-active1 nil
+                        :background "#282828")
+    (set-face-attribute 'spaceline-highlight-face nil
+                        :background "#83a598"))
+#+END_SRC
+
+** Tweaks
+Miscellaneous changes to mould Emacs to my liking.
+
+*** Spaces over Tabs
+I know... but I think it allows greater control over indentation.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package emacs
+    :custom
+    (indent-tabs-mode nil))
+#+END_SRC
+
+*** Electric Pair Mode
+Automatically insert pairs of brackets. Much like =electric-indent-mode=.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package emacs
+    :config
+    (electric-pair-mode))
+#+END_SRC
+
+*** Show Formfeed as Line
+Some views in Emacs use this weird =^L= character, which is meant to be the
+formfeed character. Something that maybe didn't really take off, and is not
+rendered particularly nicely. The following config renders it as a line in
+various modes.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package emacs
+    :init
+    (defun xah-show-formfeed-as-line ()
+      (interactive)
+      (progn
+	(when (not buffer-display-table)
+	  (setq buffer-display-table (make-display-table)))
+	(aset buffer-display-table ?\^L
+	      (vconcat (make-list 80 (make-glyph-code ?- 'font-lock-comment-face))))
+	(redraw-frame)))
+    :hook
+    ((help-mode compilation-mode) . xah-show-formfeed-as-line))
+#+END_SRC
+
+*** Window Spliting
+Emacs's =split-window-sensibly= function prefers splitting windows vertically
+(downwards). I prefer horizontal splitting by default, So I'll define a new
+function which copies the Emacs function but prefers splitting horizontally.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package emacs
+    :init
+    (defun adb-split-window-sensibly (&optional window)
+    "`split-window-sensibly' I've just swapped the horizontal and vertical checks"
+    (let ((window (or window (selected-window))))
+      (or (and (window-splittable-p window t)
+	       ;; Split window horizontally.
+	       (with-selected-window window
+		 (split-window-right)))
+	  (and (window-splittable-p window)
+	       ;; Split window vertically.
+	       (with-selected-window window
+		 (split-window-below)))
+	  (and
+	   ;; If WINDOW is the only usable window on its frame (it is
+	   ;; the only one or, not being the only one, all the other
+	   ;; ones are dedicated) and is not the minibuffer window, try
+	   ;; to split it horizontally disregarding the value of
+	   ;; `split-width-threshold'.
+	   (let ((frame (window-frame window)))
+	     (or
+	      (eq window (frame-root-window frame))
+	      (catch 'done
+		(walk-window-tree (lambda (w)
+				    (unless (or (eq w window)
+						(window-dedicated-p w))
+				      (throw 'done nil)))
+				  frame)
+		t)))
+	   (not (window-minibuffer-p window))
+	   (let ((split-width-threshold 0))
+	     (when (window-splittable-p window)
+	       (with-selected-window window
+		 (split-window-right))))))))
+    :custom
+    (split-window-preferred-function 'adb-split-window-sensibly)
+    (split-width-threshold 200))
+#+END_SRC
+
+*** Doc View Resolution
+The default doc-view resolution (used for viewing pdf documents etc.) is quite
+low. We can increase it. We have the technology.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package emacs
+    :custom
+    (doc-view-resolution 192))
+#+END_SRC
+
+** Org-mode
+Org mode is great, here are some tweaks.
+
+*** Babel Enabled Languages
+Enable babel support for specified languages.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org
+    :custom
+    (org-babel-load-languages '((emacs-lisp . t)
+				(python . t))))
+#+END_SRC
+
+*** Org Src Window Setup
+By default =C-'= in org mode edits a src code block (among other
+things) and reorganizes the frame to do it. This change makes that a
+split window instead.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org
+    :custom
+    (org-src-window-setup 'other-window))
+#+END_SRC 
+
+* Enhancements
+Things that enhance or extend Emacs's behaviour.
+
+** Quality of Life
+Extra packages which make life just a little better.
+
+*** Which-Key
+Although available keybindings can be queried by using =C-h= while entering a
+command, it's not the most convinient way to discover keybindings. =which-key=
+will popup available keybindings after a timeout, and has some other neat
+features. I also prefer to have the popup be manually triggered rather than
+using a timeout.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package which-key
+    :ensure t
+    :delight
+    :custom
+    (which-key-show-early-on-C-h t)
+    (which-key-idle-delay 10000)
+    (which-key-idle-secondary-delay 0.05)
+    :config
+    (which-key-mode))
+#+END_SRC
+
+*** Ivy and Swiper
+_flexible, simple tools for minibuffer completion in Emacs_
+Ivy enhances minibuffer completion in Emacs. Swiper enhances i-search by
+enabling fuzzy search and giving an overview of matches in the minibuffer. Both
+are required by counsel, so installing that will pull in the other two as
+dependencies.
+
+Counsel redefines some common completion commands to ones which work better
+with ivy.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package counsel
+    :ensure t
+    :config
+    (ivy-mode)
+    (counsel-mode))
+#+END_SRC
+
+Since these modes will pretty much always be enabled, I don't need to see their
+lighters.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ivy :delight)
+  (use-package counsel :delight)
+#+END_SRC
+
+I'm also going to replace the =C-s= keybinding which defaults to
+=isearch-forward= with =swiper= and =C-M-s=, which is usually bound to
+=isearch-forward-regexp= with =swiper-thing-at-point=.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package swiper
+    :bind (("C-s" . swiper)
+	   ("C-M-s" . swiper-thing-at-point)))
+#+END_SRC 
+
+*** Ace-Window
+Ace-window allows jumping to specific windows using on screen numbers. The
+readme recommends =M-o= as the main keybinding, but this is already bound by
+default in emacs. I will use =C-x M-o= as it is a more mnemonic Emacs
+keybinding, and is unbound by default.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ace-window
+    :ensure t
+    :bind (("C-x M-o" . ace-window)))
+#+END_SRC
+
+*** Restart-Emacs
+Sometimes, particularly when editing Emacs's config, I need to restart Emacs.
+Emacs doesn't have a built in way to do this, so this package adds that command.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package restart-emacs
+    :ensure t)
+#+END_SRC
+
+*** Sublimity
+All that nice stuff in other editors, now in Emacs!
+
+#+BEGIN_SRC emacs-lisp
+  (use-package sublimity 
+    :ensure t)
+  (use-package sublimity-attractive)
+#+END_SRC
+
+** Project Management
+Tools to manage projects with Emacs.
+
+*** Magit
+Magit is a fontend for git, some say the best frontend for git. It has all the
+features of it's command line counterpart, but with the advantage of being
+interactive and visually rich. Almost every Emacs user should have this package.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package magit
+    :ensure t)
+#+END_SRC
+
+*** Projectile
+Projectile is a way of managing projects within Emacs. It allows grouping of
+buffer by project, and running commands that act on an entire project. It is
+extremely useful for developing software in Emacs.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package projectile
+    :ensure t
+    :delight
+    :custom
+    (projectile-completion-system 'ivy)
+    :config
+    (projectile-mode)
+    :bind-keymap
+    ("C-x p" . projectile-command-map))
+#+END_SRC
+
+** Extra Major Modes
+Extra modes for various types of files
+
+*** Haskell
+First of all, I install the major mode.
+#+BEGIN_SRC emacs-lisp
+  (use-package haskell-mode
+    :ensure t)
+#+END_SRC
+
+*** Markdown
+Org mode is infinitely better, but sometimes practicality wins.
+#+BEGIN_SRC emacs-lisp
+  (use-package markdown-mode
+    :ensure t)
+#+END_SRC
+
+*** Yaml
+Use for lots of conf files.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package yaml-mode
+    :ensure t)
+#+END_SRC
+
+*** GLSL
+Yay graphics n' stuff
+
+#+BEGIN_SRC emacs-lisp
+  (use-package glsl-mode
+    :ensure t)
+#+END_SRC
+
+** Evil
+Lord forgive me, for I have sinned.
+
+*** Base
+I've tried using the emacs keybindings for a little bit now, and while I am able
+to edit text somewhat efficiently, I know vim keybindings much better, and I
+think they are a bit more powerful. However, I don't want to try and replace
+every system in emacs with vim style keybindings since, Emacs is still
+Emacs. Instead I will make the default evil state the ~emacs~ state, then for
+certain modes, make ~normal~ the inital state.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package evil
+    :ensure t
+    :custom (evil-default-state 'emacs)
+    :config
+    (evil-mode 1)
+    (evil-set-initial-state 'prog-mode 'normal)
+    (evil-set-initial-state 'org-mode 'normal))
+#+END_SRC
+
+
+
+
