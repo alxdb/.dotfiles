@@ -361,13 +361,22 @@ Emacs doesn't have a built in way to do this, so this package adds that command.
     :ensure t)
 #+END_SRC
 
-*** Sublimity
-All that nice stuff in other editors, now in Emacs!
+*** Writeroom
+Distraction free editing.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package sublimity 
+  (use-package writeroom-mode
     :ensure t)
-  (use-package sublimity-attractive)
+#+END_SRC
+
+*** Rainbow Delimiters
+Because who doesn't like rainbows? Also, very useful for lisp. The modes this is
+active in is defined here.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package rainbow-delimiters
+    :ensure t
+    :hook (clojure-mode . rainbow-delimiters-mode))
 #+END_SRC
 
 ** Project Management
@@ -418,6 +427,15 @@ Cider's all you need.
     :ensure t)
 #+END_SRC
 
+**** Disable Line Wrapping in Repl
+Sometime the repl will spit out an ridiculously long line. I really don't need
+to see it most of the time.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package cider
+    :hook (cider-repl-mode . toggle-truncate-lines))
+#+END_SRC
+
 #+RESULTS:
 
 *** Markdown
@@ -462,8 +480,17 @@ then for certain modes, make ~normal~ the inital state.
     :custom (evil-default-state 'emacs)
     :config
     (evil-mode 1)
-    (evil-set-initial-state 'prog-mode 'normal)
-    (evil-set-initial-state 'org-mode 'normal))
+    (setq adb-evil-major-modes '(prog-mode org-mode))
+    (mapc (lambda (mode) (evil-set-initial-state mode 'normal))
+          adb-evil-major-modes))
+#+END_SRC
+
+*** Undo Tree
+For the moment, I just want to change the lighter.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package undo-tree
+    :delight (undo-tree-mode "UT"))
 #+END_SRC
 
 *** Unbindings
@@ -474,5 +501,29 @@ remove those.
   (use-package evil
     :bind (:map evil-normal-state-map
                 ("M-." . nil)))
+#+END_SRC
+
+*** CleverParens
+Modal lispy editing.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package evil-cleverparens
+    :ensure t
+    :delight "CP"
+    :custom (evil-mode-beyond-eol t) ; as suggested in readme
+    :hook ((clojure-mode emacs-lisp-mode) . evil-cleverparens-mode))
+
+  (use-package evil-cleverparens-text-objects) ; to get forms/comments/defuns as text-objects
+#+END_SRC
+
+*** Folding
+This is the basic form of folding. To keep things simple, I'm just going to
+enable ~hs-minor-mode~ in the same places I use evil normal mode as the inital
+mode.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package hideshow
+    :delight (hs-minor-mode "HS")
+    :hook ((prog-mode org-mode) . hs-minor-mode))
 #+END_SRC
 
