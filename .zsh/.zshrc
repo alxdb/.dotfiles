@@ -1,5 +1,8 @@
 # Aliases
-alias ef=$EDITOR # ef stands for edit file
+# ef stands for edit file (more accurate than vi, but just as concise)
+alias ef=$EDITOR
+alias vf="vim -R" # view file
+alias ec="emacsclient -c" # emacs client
 alias pacS="sudo pacman -S"
 # this allows vcs for any file in home, kept in a repo called ~/.dotfiles
 alias dotf='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'

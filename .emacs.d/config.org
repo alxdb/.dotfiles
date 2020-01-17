@@ -233,6 +233,15 @@ low. We can increase it. We have the technology.
     (doc-view-resolution 192))
 #+END_SRC
 
+*** Set Fill Column
+70 charaters is ridiculous, 80 is much better.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package emacs
+    :custom
+    (fill-column 80))
+#+END_SRC
+
 ** Org-mode
 Org mode is great, here are some tweaks.
 
