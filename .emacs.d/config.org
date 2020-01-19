@@ -409,6 +409,14 @@ extremely useful for developing software in Emacs.
     ("C-x p" . projectile-command-map))
 #+END_SRC
 
+**** Search
+projectile requires ~ag.el~ in order to do project wide searches.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ag
+    :ensure t)
+#+END_SRC
+
 ** Extra Major Modes
 Extra modes for various types of files
 
