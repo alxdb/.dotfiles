@@ -9,7 +9,7 @@ set $mod Mod4
 # bindsym XF86AudioRaiseVolume exec "pamixer -i 5"
 # bindsym XF86AudioLowerVolume exec "pamixer -d 5"
 # bindsym XF86AudioMute exec "pamixer -t"
-# 
+
 # bindsym XF86AudioPlay exec "playerctl play-pause"
 # bindsym XF86AudioNext exec "playerctl next"
 # bindsym XF86AudioPrev exec "playerctl previous"
@@ -20,12 +20,7 @@ set $inner_gap 20
 set $outer_gap 0
 gaps inner $inner_gap
 gaps outer $outer_gap
-bindsym $mod+g exec --no-startup-id "if [ `i3-msg -t get_tree | grep -Po \
-    '.*\\"gaps\\":{\\"inner\\":\K(-|)[0-9]+(?=.*\\"focused\\":true)'` -eq 0 ]; then \
-        i3-msg gaps inner current set 0 && i3-msg gaps outer current set 0 ; \
-    else \
-        i3-msg gaps inner current set $inner_gap &&  i3-msg gaps outer current set $outer_gap; \
-    fi"
+bindsym $mod+g exec --no-startup-id "~/.config/i3/scripts/toggle-gaps $inner_gap $outer_gap"
 
 # Colorscheme (gruvbox-dark)
 set $bg		#282828
@@ -45,12 +40,12 @@ set $aqua	#689d68
 set $gray	#a89984
 set $dgray	#928374
 
-# colorclass			border	backg	text	ind		child_b
-client.focused			$fblue	$fblue	$fg		$blue	$fblue
+# colorclass		border	backg	text	ind		child_b
+client.focused		$fblue	$fblue	$fg		$blue	$fblue
 client.focused_inactive	$sbg	$sbg	$fg		$gray	$sbg
-client.unfocused		$hbg	$hbg	$fg		$dgray	$hbg
-client.urgent			$red	$red	$bg1	$red	$red
-client.background		$bg
+client.unfocused	$hbg	$hbg	$fg		$dgray	$hbg
+client.urgent		$red	$red	$bg1	$red	$red
+client.background	$bg
 
 set $up k
 set $down j
@@ -154,51 +149,51 @@ bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'exit i3?' -B 'yes' 'i3-msg e
 # Suspend System
 bindsym $mod+Shift+s exec "systemctl suspend"
 # lock screen
-bindsym $mod+Mod1+l exec "xscreensaver-command -lock"
+bindsym $mod+Mod1+l exec "i3lock -c 1d2021"
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
-        # These bindings trigger as soon as you enter the resize mode
+	# These bindings trigger as soon as you enter the resize mode
 
-        # Pressing left will shrink the window’s width.
-        # Pressing right will grow the window’s width.
-        # Pressing up will shrink the window’s height.
-        # Pressing down will grow the window’s height.
-        bindsym $left       resize shrink width 10 px or 10 ppt
-        bindsym $down       resize grow height 10 px or 10 ppt
-        bindsym $up         resize shrink height 10 px or 10 ppt
-        bindsym $right      resize grow width 10 px or 10 ppt
+	# Pressing left will shrink the window’s width.
+	# Pressing right will grow the window’s width.
+	# Pressing up will shrink the window’s height.
+	# Pressing down will grow the window’s height.
+	bindsym $left resize shrink width 10 px or 10 ppt
+	bindsym $down resize grow height 10 px or 10 ppt
+	bindsym $up resize shrink height 10 px or 10 ppt
+	bindsym $right resize grow width 10 px or 10 ppt
 
-        # same bindings, but for the arrow keys
-        bindsym Left        resize shrink width 10 px or 10 ppt
-        bindsym Down        resize grow height 10 px or 10 ppt
-        bindsym Up          resize shrink height 10 px or 10 ppt
-        bindsym Right       resize grow width 10 px or 10 ppt
+	# same bindings, but for the arrow keys
+	bindsym Left resize shrink width 10 px or 10 ppt
+	bindsym Down resize grow height 10 px or 10 ppt
+	bindsym Up resize shrink height 10 px or 10 ppt
+	bindsym Right resize grow width 10 px or 10 ppt
 
-        # back to normal: Enter or Escape or $mod+r
-        bindsym Return mode "default"
-        bindsym Escape mode "default"
-        bindsym $mod+r mode "default"
+	# back to normal: Enter or Escape or $mod+r
+	bindsym Return mode "default"
+	bindsym Escape mode "default"
+	bindsym $mod+r mode "default"
 }
 
 bindsym $mod+r mode "resize"
 
 # Bar Settings
-bindsym $mod+Shift+i bar mode invisible 
-bindsym $mod+Shift+d bar mode dock 
+bindsym $mod+Shift+i bar mode invisible
+bindsym $mod+Shift+d bar mode dock
 bar {
-	mode dock 
+	mode dock
 	hidden_state hide
 	position top
 	status_command i3blocks
 	colors {
 		background $hbg
 		statusline $fg
-		separator  $bg2
+		separator  $fblue
 
-		focused_workspace	$fblue	$fblue	$bg1
+		focused_workspace	$bg2	$fblue	$hbg
 		inactive_workspace	$sbg	$sbg	$fg
-		urgent_workspace	$red	$red	$bg1
+		urgent_workspace	$red	$red	$hbg
 	}
 }
 
@@ -206,6 +201,6 @@ bar {
 for_window [class="purr-data"] floating enable
 for_window [class="Qjackctl" instance="qjackctl" id=73400326] floating enable
 # for_window [class="Spotify" instance="spotify"] floating enable
-# for_window [class="Spotify" instance="spotify"] resize set 2000 2000 
+# for_window [class="Spotify" instance="spotify"] resize set 2000 2000
 # for_window [class="Spotify" instance="spotify"] move window position center
 # for_window [class="Spotify" instance="spotify"] move scratchpad scratchpad show
