@@ -116,12 +116,15 @@ hard dark theme.
 Why Emacs doesn't just use the standard monospace font, I don't know. Let's make
 it do that.
 
+On MacOS there's no standard way to change the default fonts (thanks
+Apple...). So I'll just specify the font here manually.
+
 #+BEGIN_SRC emacs-lisp
   (use-package emacs
     :config
     (set-face-attribute 'default nil
-			:family "Monospace"
-			:height 90))
+                        :family "Iosevka"
+                        :height 120))
 #+END_SRC
 
 *** Spaceline
