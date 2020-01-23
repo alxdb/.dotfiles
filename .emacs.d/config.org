@@ -120,8 +120,8 @@ it do that.
   (use-package emacs
     :config
     (set-face-attribute 'default nil
-			:family "Monospace"
-			:height 90))
+                        :family "Monospace"
+                        :height 100))
 #+END_SRC
 
 *** Spaceline
@@ -131,12 +131,19 @@ The default Emacs modeline is kinda gross. Let's fix that.
   (use-package spaceline
     :ensure t)
   (use-package spaceline-config
+    :custom (spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
     :config
     (spaceline-spacemacs-theme)
     (set-face-attribute 'powerline-active1 nil
                         :background "#282828")
     (set-face-attribute 'spaceline-highlight-face nil
-                        :background "#83a598"))
+                        :background "#83a598")
+    (set-face-attribute 'spaceline-evil-normal nil
+                        :background "#83a598")
+    (set-face-attribute 'spaceline-evil-insert nil
+                        :background "#8ec07c")
+    (set-face-attribute 'spaceline-evil-emacs nil
+                        :background "#d3869b"))
 #+END_SRC
 
 ** Tweaks
@@ -193,37 +200,37 @@ function which copies the Emacs function but prefers splitting horizontally.
     "`split-window-sensibly' I've just swapped the horizontal and vertical checks"
     (let ((window (or window (selected-window))))
       (or (and (window-splittable-p window t)
-	       ;; Split window horizontally.
-	       (with-selected-window window
-		 (split-window-right)))
-	  (and (window-splittable-p window)
-	       ;; Split window vertically.
-	       (with-selected-window window
-		 (split-window-below)))
-	  (and
-	   ;; If WINDOW is the only usable window on its frame (it is
-	   ;; the only one or, not being the only one, all the other
-	   ;; ones are dedicated) and is not the minibuffer window, try
-	   ;; to split it horizontally disregarding the value of
-	   ;; `split-width-threshold'.
-	   (let ((frame (window-frame window)))
-	     (or
-	      (eq window (frame-root-window frame))
-	      (catch 'done
-		(walk-window-tree (lambda (w)
-				    (unless (or (eq w window)
-						(window-dedicated-p w))
-				      (throw 'done nil)))
-				  frame)
-		t)))
-	   (not (window-minibuffer-p window))
-	   (let ((split-width-threshold 0))
-	     (when (window-splittable-p window)
-	       (with-selected-window window
-		 (split-window-right))))))))
+               ;; Split window horizontally.
+               (with-selected-window window
+                 (split-window-right)))
+          (and (window-splittable-p window)
+               ;; Split window vertically.
+               (with-selected-window window
+                 (split-window-below)))
+          (and
+           ;; If WINDOW is the only usable window on its frame (it is
+           ;; the only one or, not being the only one, all the other
+           ;; ones are dedicated) and is not the minibuffer window, try
+           ;; to split it horizontally disregarding the value of
+           ;; `split-width-threshold'.
+           (let ((frame (window-frame window)))
+             (or
+              (eq window (frame-root-window frame))
+              (catch 'done
+                (walk-window-tree (lambda (w)
+                                    (unless (or (eq w window)
+                                                (window-dedicated-p w))
+                                      (throw 'done nil)))
+                                  frame)
+                t)))
+           (not (window-minibuffer-p window))
+           (let ((split-width-threshold 0))
+             (when (window-splittable-p window)
+               (with-selected-window window
+                 (split-window-right))))))))
     :custom
     (split-window-preferred-function 'adb-split-window-sensibly)
-    (split-width-threshold 200))
+    (split-width-threshold 300))
 #+END_SRC
 
 *** Doc View Resolution
@@ -349,7 +356,8 @@ keybinding, and is unbound by default.
 #+BEGIN_SRC emacs-lisp
   (use-package ace-window
     :ensure t
-    :bind (("C-x M-o" . ace-window)))
+    :bind (("C-x M-o" . ace-window))
+    :custom (aw-keys '(97 115 100 102 113 119 101 114)))
 #+END_SRC
 
 *** Restart-Emacs
@@ -379,11 +387,147 @@ active in is defined here.
     :hook (clojure-mode . rainbow-delimiters-mode))
 #+END_SRC
 
+*** Persp Mode
+Provides tagged workspaces, like in tiling window managers. Spaceline will
+display the current workspace, so I will remove the lighter. I'm also going to
+set a bunch of config options to what I prefer.
+
+There are a lot of elisp snippets on Bad-ptr's github for configuring various
+other packages to work with persp-mode. I'm going to translate a few into
+use-package parlance, and put them in subheadings.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package persp-mode
+    :ensure t
+    :delight
+    :bind-keymap
+    ("C-x M-p" . persp-key-map)
+    :custom
+    (*persp-restrict-buffers-to* 0)
+    (persp-autokill-buffer-on-remove 'kill-weak)
+    (persp-autokill-persp-when-removed-last-buffer 'kill-auto)
+    (persp-set-read-buffer-function t)
+    (persp-auto-resume-time 0)
+    :config
+    (persp-mode 1))
+#+END_SRC
+
+**** Ivy Integration
+This configures ivy to ignore buffers that aren't in the current
+perspective. Also tells ivy not to sort the completion options to various
+pserp-mode functions. Likely becuase persp mode does this itself.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ivy
+    :config
+    (add-to-list 'ivy-ignore-buffers
+                 #'(lambda (b)
+                     (when persp-mode
+                       (let ((persp (get-current-persp)))
+                         (if persp
+                             (not (persp-contain-buffer-p b persp))
+                           nil)))))
+    (add-to-list 'ivy-sort-functions-alist 
+                 '((persp-kill-buffer   . nil)
+                   (persp-remove-buffer . nil)
+                   (persp-add-buffer    . nil)
+                   (persp-switch        . nil)
+                   (persp-window-switch . nil)
+                   (persp-frame-switch  . nil))))
+#+END_SRC
+
+**** Projectile Integration
+Create perspectives which switching to projects etc. etc. like in spacemacs.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package persp-mode
+    :config
+    (defvar persp-mode-projectile-bridge-before-switch-selected-window-buffer nil)
+
+    (persp-def-auto-persp
+     "projectile"
+     :parameters '((dont-save-to-file . t)
+                   (persp-mode-projectile-bridge . t))
+     :hooks '(projectile-before-switch-project-hook
+              projectile-after-switch-project-hook
+              projectile-find-file-hook
+              find-file-hook)
+     :dyn-env '((after-switch-to-buffer-adv-suspend t))
+     :switch 'frame
+     :predicate
+     #'(lambda (buffer &optional state)
+         (if (eq 'projectile-before-switch-project-hook
+                 (alist-get 'hook state))
+             state
+           (and
+            projectile-mode
+            (buffer-live-p buffer)
+            (buffer-file-name buffer)
+            ;; (not git-commit-mode)
+            (projectile-project-p)
+            (or state t))))
+     :get-name
+     #'(lambda (state)
+         (if (eq 'projectile-before-switch-project-hook
+                 (alist-get 'hook state))
+             state
+           (push (cons 'persp-name
+                       (with-current-buffer (alist-get 'buffer state)
+                         (projectile-project-name)))
+                 state)
+           state))
+     :on-match
+     #'(lambda (state)
+         (let ((hook (alist-get 'hook state))
+               (persp (alist-get 'persp state))
+               (buffer (alist-get 'buffer state)))
+           (case hook
+             (projectile-before-switch-project-hook
+              (let ((win (if (minibuffer-window-active-p (selected-window))
+                             (minibuffer-selected-window)
+                           (selected-window))))
+                (when (window-live-p win)
+                  (setq persp-mode-projectile-bridge-before-switch-selected-window-buffer
+                        (window-buffer win)))))
+
+             (projectile-after-switch-project-hook
+              (when (buffer-live-p
+                     persp-mode-projectile-bridge-before-switch-selected-window-buffer)
+                (let ((win (selected-window)))
+                  (unless (eq (window-buffer win)
+                              persp-mode-projectile-bridge-before-switch-selected-window-buffer)
+                    (set-window-buffer
+                     win persp-mode-projectile-bridge-before-switch-selected-window-buffer)))))
+
+             (find-file-hook
+              (setcdr (assq :switch state) nil)))
+           (if (case hook
+                 (projectile-before-switch-project-hook nil)
+                 (t t))
+               (persp--auto-persp-default-on-match state)
+             (setcdr (assq :after-match state) nil)))
+         state)
+     :after-match
+     #'(lambda (state)
+         (when (eq 'find-file-hook (alist-get 'hook state))
+           (run-at-time 0.5 nil
+                        #'(lambda (buf persp)
+                            (when (and (eq persp (get-current-persp))
+                                       (not (eq buf (window-buffer (selected-window)))))
+                              ;; (switch-to-buffer buf)
+                              (persp-add-buffer buf persp t nil)))
+                        (alist-get 'buffer state)
+                        (get-current-persp)))
+         (persp--auto-persp-default-after-match state))))
+#+END_SRC
+
+**** TODO Make better spaceline segment for persp-mode
+
 ** Project Management
 Tools to manage projects with Emacs.
 
 *** Magit
-Magit is a fontend for git, some say the best frontend for git. It has all the
+Magit is a frontend for git, some say the best frontend for git. It has all the
 features of it's command line counterpart, but with the advantage of being
 interactive and visually rich. Almost every Emacs user should have this package.
 
@@ -417,17 +561,80 @@ projectile requires ~ag.el~ in order to do project wide searches.
     :ensure t)
 #+END_SRC
 
+** IDE
+*** Company
+Basically completion, just with more features and backends than the emacs
+default (one of those backends is the default emacs completion system).
+
+#+BEGIN_SRC emacs-lisp
+  (use-package company
+    :ensure t
+    :delight "CY"
+    :hook (after-init . global-company-mode))
+#+END_SRC
+
+*** Flycheck
+Again, basically flymake but supports more languages, backends and has a few
+more features.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package flycheck
+    :ensure t
+    :delight "FC"
+    :custom
+    (flycheck-emacs-lisp-load-path 'inherit)
+    (flycheck-disabled-checkers '(emacs-lisp-checkdoc))
+    :init (global-flycheck-mode))
+#+END_SRC
+
+I also like my errors to be inline.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package flycheck-inline
+    :ensure t
+    :after (flycheck)
+    :hook (flycheck-mode . flycheck-inline-mode))
+#+END_SRC
+
+*** LSP
+For languages that support it, it's great. I'm only enabling this as a hook for
+languages that support it.
+
+I'm going to use the standard ~lsp-mode~ package, which is more or less why I
+installed the previous packages. ~elglot~ is also feasable, but it's a lot less
+popular, and even the author of it says that there's probably not much
+difference any more between them.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package lsp-mode
+    :ensure t
+    :hook (rust-mode)
+    :custom (lsp-prefer-flymake nil))
+#+END_SRC
+
+For Company support:
+
+#+BEGIN_SRC emacs-lisp
+  (use-package company-lsp
+    :ensure t
+    :config
+    (push 'company-lsp company-backends))
+#+END_SRC
+
+For Flycheck support:
+
+#+BEGIN_SRC emacs-lisp
+  (use-package lsp-ui
+    :ensure t
+    :hook (lsp-mode . lsp-ui-mode)
+    :custom (lsp-ui-flycheck-enable t))
+#+END_SRC
+
 ** Extra Major Modes
 Extra modes for various types of files
 
-*** Haskell
-First of all, I install the major mode.
-#+BEGIN_SRC emacs-lisp
-  (use-package haskell-mode
-    :ensure t)
-#+END_SRC
-
-*** Clojure
+*** Programming
+**** Clojure
 Cider's all you need.
 
 #+BEGIN_SRC emacs-lisp
@@ -435,9 +642,8 @@ Cider's all you need.
     :ensure t)
 #+END_SRC
 
-**** Disable Line Wrapping in Repl
-Sometime the repl will spit out an ridiculously long line. I really don't need
-to see it most of the time.
+Sometime the repl will spit out a ridiculously long line. I really don't need to
+see it most of the time.
 
 #+BEGIN_SRC emacs-lisp
   (use-package cider
@@ -446,7 +652,67 @@ to see it most of the time.
 
 #+RESULTS:
 
-*** Markdown
+**** GLSL
+Yay graphics n' stuff
+
+#+BEGIN_SRC emacs-lisp
+  (use-package glsl-mode
+    :ensure t)
+#+END_SRC
+
+***** Flycheck
+
+Add a checker for flycheck
+
+#+BEGIN_SRC emacs-lisp
+  (use-package flycheck
+    :init
+    (flycheck-define-checker glsl-lang-validator
+      "See URL https://www.khronos.org/opengles/sdk/tools/Reference-Compiler"
+      :command ("glslangValidator" source)
+      :error-patterns ((error line-start "ERROR: " column ":" line ": " (message) line-end))
+      :modes glsl-mode)
+    (add-to-list 'flycheck-checkers 'glsl-lang-validator))
+#+END_SRC
+
+**** Haskell
+First of all, I install the major mode.
+#+BEGIN_SRC emacs-lisp
+  (use-package haskell-mode
+    :ensure t)
+#+END_SRC
+
+**** JavaScript
+I'm a sadist.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package js2-mode
+    :ensure t
+    :config
+    (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+    (add-to-list 'interpreter-mode-alist '("node" . js2-mode)))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package npm-mode
+    :ensure t)
+#+END_SRC
+
+**** Rust
+Stuff for make rust work good.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package rust-mode
+    :ensure t
+    :custom (rust-format-on-save t))
+
+  (use-package cargo
+    :ensure
+    :hook (rust-mode . cargo-minor-mode))
+#+END_SRC
+
+*** Markup
+**** Markdown
 It's everywhere.
 
 #+BEGIN_SRC emacs-lisp
@@ -454,19 +720,12 @@ It's everywhere.
     :ensure t)
 #+END_SRC
 
-*** Yaml
+*** Data
+**** Yaml
 Use for lots of conf files.
 
 #+BEGIN_SRC emacs-lisp
   (use-package yaml-mode
-    :ensure t)
-#+END_SRC
-
-*** GLSL
-Yay graphics n' stuff
-
-#+BEGIN_SRC emacs-lisp
-  (use-package glsl-mode
     :ensure t)
 #+END_SRC
 
