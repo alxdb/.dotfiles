@@ -33,6 +33,7 @@ markup=none
 
 # Updates
 [arch-update]
+command=$SCRIPT_DIR/$BLOCK_NAME/$BLOCK_NAME.py
 markup=pango
 interval=30
 
@@ -94,6 +95,7 @@ separator=false
 
 # Not working
 [bandwidth]
+command=echo $($SCRIPT_DIR/$BLOCK_NAME/$BLOCK_NAME)
 # INTERFACE=enp5s0
 interval=5
 
