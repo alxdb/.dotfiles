@@ -69,7 +69,7 @@ interval=10
 #
 # The type defaults to "mem" if the instance is not specified.
 [memory]
-label=MEM 
+label=RAM 
 separator=false
 interval=30
 
@@ -79,7 +79,7 @@ interval=30
 # The script may be called with a optional argument to set the alert
 # (defaults to 10 for 10%).
 [disk]
-label=HOME 
+label=DISK 
 DIR=/
 interval=30
 
@@ -89,11 +89,10 @@ interval=30
 # The address can be forced to IPv4 or IPv6 with -4 or -6 switches.
 [iface]
 IFACE=enp5s0
-color=#689d6a
+color=#ebdbb2
 interval=10
 separator=false
 
-# Not working
 [bandwidth]
 command=echo $($SCRIPT_DIR/$BLOCK_NAME/$BLOCK_NAME)
 # INTERFACE=enp5s0
@@ -103,7 +102,7 @@ interval=5
 #
 [time]
 command=date '+%a %d %b %Y %I:%M:%S %p '
-interval=5
+interval=1
 
 # Generic media player support
 #

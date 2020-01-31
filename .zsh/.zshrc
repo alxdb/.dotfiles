@@ -6,6 +6,8 @@ alias ec="emacsclient" # emacs client
 alias pacS="sudo pacman -S"
 # this allows vcs for any file in home, kept in a repo called ~/.dotfiles
 alias dotf='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+# screw you bitwig... (I love you really)
+alias ls='command ls -IBitwig\ Studio --color=auto -v'
 
 # git info styling
 zstyle ':vcs_info:*' enable git

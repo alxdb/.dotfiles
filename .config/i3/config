@@ -29,6 +29,7 @@ set $sbg	#32302f
 set $bg1	#3c3836
 set $bg2	#504945
 set $fg		#ebdbb2
+set $hfg	#f9f5d7
 set $red	#cc241d
 set $fred	#fb4934
 set $green	#98971a
@@ -36,7 +37,7 @@ set $yellow	#d79921
 set $blue	#458588
 set $fblue	#83a598
 set $purple	#b16286
-set $aqua	#689d68
+set $aqua	#689d6a
 set $gray	#a89984
 set $dgray	#928374
 
@@ -63,9 +64,9 @@ bindsym $mod+Mod1+Return exec firefox
 bindsym $mod+Shift+q kill
 
 # rofi
-bindsym $mod+d exec rofi -show drun
-bindsym $mod+Mod1+d exec rofi -show run
-bindsym $mod+o exec rofi -show window
+bindsym $mod+d exec rofi -font "sans 16" -show drun
+bindsym $mod+Mod1+d exec rofi -font "mono 16" -show run
+bindsym $mod+o exec rofi -font "mono 16" -show window
 # bindsym $mod+Shift+p exec rofi -modi 1pass:rofi-1pass -show 1pass
 
 # change focus
@@ -140,6 +141,9 @@ bindsym $mod+Shift+7 move container to workspace number 7
 bindsym $mod+Shift+8 move container to workspace number 8
 bindsym $mod+Shift+9 move container to workspace number 9
 
+# rename focused workspace
+bindsym $mod+p exec "~/.config/i3/scripts/rename_workspace"
+
 # reload the configuration file
 bindsym $mod+Shift+c reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
@@ -176,7 +180,7 @@ mode "resize" {
 	bindsym $mod+r mode "default"
 }
 
-bindsym $mod+r mode "resize"
+bindsym $mod+r mode "resize" 
 
 # Bar Settings
 bindsym $mod+Shift+i bar mode invisible
@@ -189,10 +193,10 @@ bar {
 	colors {
 		background $hbg
 		statusline $fg
-		separator  $fblue
+		separator  $bg2
 
-		focused_workspace	$bg2	$fblue	$hbg
-		inactive_workspace	$sbg	$sbg	$fg
+		focused_workspace	$hbg	$fg	$hbg
+		inactive_workspace	$hbg	$sbg	$fg
 		urgent_workspace	$red	$red	$hbg
 	}
 }

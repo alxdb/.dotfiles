@@ -118,33 +118,46 @@ it do that.
 
 #+BEGIN_SRC emacs-lisp
   (use-package emacs
-    :config
-    (set-face-attribute 'default nil
-                        :family "Monospace"
-                        :height 90))
+    :custom-face
+    (default ((t (:family "Monospace" :height 90)))))
 #+END_SRC
 
 *** Spaceline
 The default Emacs modeline is kinda gross. Let's fix that.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package spaceline
-    :ensure t)
+  (use-package spaceline :ensure t)
+
   (use-package spaceline-config
-    :custom (spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
-    :config
-    (spaceline-spacemacs-theme)
-    (set-face-attribute 'powerline-active1 nil
-                        :background "#282828")
-    (set-face-attribute 'spaceline-highlight-face nil
-                        :background "#83a598")
-    (set-face-attribute 'spaceline-evil-normal nil
-                        :background "#83a598")
-    (set-face-attribute 'spaceline-evil-insert nil
-                        :background "#8ec07c")
-    (set-face-attribute 'spaceline-evil-emacs nil
-                        :background "#d3869b"))
+    :custom
+    (spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
+    :custom-face
+    (mode-line ((t (:foreground "#ebdbb2" :background "#32302f"))))
+    (powerline-active1 ((t (:foreground "#d5c4a1" :background "#1c1c1c"))))
+    (powerline-active2 ((t (:background "#504945"))))
+    (mode-line-inactive ((t (:background "#1c1c1c"))))
+    (spaceline-highlight-face ((t (:background "#83a598"))))
+    (spaceline-evil-emacs ((t (:background "#f28019" :foreground "#282828"))))
+    (spaceline-evil-normal ((t (:background "#928374" :foreground "#282828"))))
+    (spaceline-evil-insert ((t (:background "#5f8787" :foreground "#282828"))))
+    (spaceline-evil-replace ((t (:background "#afaf00" :foreground "#282828")))))
 #+END_SRC
+
+Who doesn't like fancy icons? Unfortunately, the fancier seperators seem to be a
+bit borked. I will turn them off for now, but should fix them later.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package spaceline-all-the-icons
+    :ensure t
+    :after spaceline
+    :custom
+    (spaceline-all-the-icons-clock-always-visible nil)
+    (spaceline-all-the-icons-separator-type 'none)
+    :config
+    (spaceline-all-the-icons-theme))
+#+END_SRC
+
+**** TODO Fix Spaceline All The Icons Seperators
 
 ** Tweaks
 Miscellaneous changes to mould Emacs to my liking.
@@ -257,9 +270,10 @@ I'm going to edit this file a lot, it would be convenient to have a keybinding t
 
 #+BEGIN_SRC emacs-lisp
   (use-package emacs
-    :bind ("C-x c" . (lambda ()
-                       (interactive)
-                       (find-file "~/.emacs.d/config.org"))))
+    :bind
+    ("C-x c" . (lambda ()
+                 (interactive)
+                 (find-file "~/.emacs.d/config.org"))))
 #+END_SRC
 
 ** Org-mode
@@ -286,13 +300,47 @@ split window instead.
     (org-src-window-setup 'other-window))
 #+END_SRC 
 
+*** Colors
+**** Org Blocks
+I don't like the background being quite so bright.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org
+    :custom-face
+    (org-block ((t (:background "#1c1c1c"))))
+    (org-block-begin-line ((t (:background "#32302f"))))
+    (org-block-end-line ((t (:background "#32302f")))))
+#+END_SRC
+
+** Dired
+King of file browsers (probably).
+
+#+BEGIN_SRC emacs-lisp
+  (use-package dired
+    :config
+    (setq dired-listing-switches "-Ahlv --group-directories-first")
+    :hook ((dired-mode . dired-hide-details-mode)))
+#+END_SRC
+
+*** Dired Subtree
+Tree style exploration of file structures is very usefull.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package dired-subtree
+    :ensure t
+    :config
+    (bind-keys :map dired-mode-map
+               ("i" . dired-subtree-insert)
+               (";" . dired-subtree-remove)))
+#+END_SRC
+
 * Enhancements
 Things that enhance or extend Emacs's behaviour.
 
 ** Quality of Life
 Extra packages which make life just a little better.
 
-*** Which-Key
+*** Which Key
 Although available keybindings can be queried by using =C-h= while entering a
 command, it's not the most convinient way to discover keybindings. =which-key=
 will popup available keybindings after a timeout, and has some other neat
@@ -305,7 +353,7 @@ using a timeout.
     :delight
     :custom
     (which-key-show-early-on-C-h t)
-    (which-key-idle-delay 10000)
+    (which-key-idle-delay 0.2)
     (which-key-idle-secondary-delay 0.05)
     :config
     (which-key-mode))
@@ -333,8 +381,10 @@ Since these modes will pretty much always be enabled, I don't need to see their
 lighters.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package ivy :delight)
-  (use-package counsel :delight)
+  (use-package ivy
+    :delight)
+  (use-package counsel
+    :delight)
 #+END_SRC
 
 I'm also going to replace the =C-s= keybinding which defaults to
@@ -343,8 +393,9 @@ I'm also going to replace the =C-s= keybinding which defaults to
 
 #+BEGIN_SRC emacs-lisp
   (use-package swiper
-    :bind (("C-s" . swiper)
-	   ("C-M-s" . swiper-thing-at-point)))
+    :bind
+    (("C-s" . swiper)
+     ("C-M-s" . swiper-thing-at-point)))
 #+END_SRC 
 
 *** Ace-Window
@@ -356,8 +407,10 @@ keybinding, and is unbound by default.
 #+BEGIN_SRC emacs-lisp
   (use-package ace-window
     :ensure t
-    :bind (("C-x M-o" . ace-window))
-    :custom (aw-keys '(97 115 100 102 113 119 101 114)))
+    :bind
+    (("C-x M-o" . ace-window))
+    :custom
+    (aw-keys '(97 115 100 102 113 119 101 114)))
 #+END_SRC
 
 *** Restart-Emacs
@@ -374,7 +427,15 @@ Distraction free editing.
 
 #+BEGIN_SRC emacs-lisp
   (use-package writeroom-mode
-    :ensure t)
+    :ensure t
+    :delight "WR"
+    :bind
+    ("C-x C-w" . writeroom-mode)
+    :custom
+    (writeroom-maximize-window nil)
+    (writeroom-mode-line t)
+    (writeroom-bottom-divider-width 0)
+    (writeroom-global-effects '()))
 #+END_SRC
 
 *** Rainbow Delimiters
@@ -384,7 +445,58 @@ active in is defined here.
 #+BEGIN_SRC emacs-lisp
   (use-package rainbow-delimiters
     :ensure t
-    :hook (clojure-mode . rainbow-delimiters-mode))
+    :hook ((clojure-mode emacs-lisp-mode) . rainbow-delimiters-mode))
+#+END_SRC
+
+*** Terminal Here
+Add a function and keybinding to open the default terminal emulator in the
+directory.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package terminal-here
+    :ensure t
+    :custom (terminal-here-terminal-command '("alacritty"))
+    :bind (("C-M-!" . terminal-here-launch) 
+           :map projectile-command-map
+           ("x x" . terminal-here-project-launch)))
+#+END_SRC
+
+** Project Management
+Tools to manage projects with Emacs.
+
+*** Magit
+Magit is a frontend for git, some say the best frontend for git. It has all the
+features of it's command line counterpart, but with the advantage of being
+interactive and visually rich. Almost every Emacs user should have this package.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package magit
+    :ensure t)
+#+END_SRC
+
+*** Projectile
+Projectile is a way of managing projects within Emacs. It allows grouping of
+buffer by project, and running commands that act on an entire project. It is
+extremely useful for developing software in Emacs.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package projectile
+    :ensure t
+    :delight
+    :custom
+    (projectile-completion-system 'ivy)
+    :config
+    (projectile-mode)
+    :bind-keymap
+    ("C-x p" . projectile-command-map))
+#+END_SRC
+
+**** Search
+projectile requires ~ag.el~ in order to do project wide searches.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ag
+    :ensure t)
 #+END_SRC
 
 *** Persp Mode
@@ -521,47 +633,9 @@ Create perspectives which switching to projects etc. etc. like in spacemacs.
          (persp--auto-persp-default-after-match state))))
 #+END_SRC
 
-**** TODO Make better spaceline segment for persp-mode
+** IDE Features
+Making Emacs more like an IDE
 
-** Project Management
-Tools to manage projects with Emacs.
-
-*** Magit
-Magit is a frontend for git, some say the best frontend for git. It has all the
-features of it's command line counterpart, but with the advantage of being
-interactive and visually rich. Almost every Emacs user should have this package.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package magit
-    :ensure t)
-#+END_SRC
-
-*** Projectile
-Projectile is a way of managing projects within Emacs. It allows grouping of
-buffer by project, and running commands that act on an entire project. It is
-extremely useful for developing software in Emacs.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package projectile
-    :ensure t
-    :delight
-    :custom
-    (projectile-completion-system 'ivy)
-    :config
-    (projectile-mode)
-    :bind-keymap
-    ("C-x p" . projectile-command-map))
-#+END_SRC
-
-**** Search
-projectile requires ~ag.el~ in order to do project wide searches.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package ag
-    :ensure t)
-#+END_SRC
-
-** IDEish
 *** Company
 Basically completion, just with more features and backends than the emacs
 default (one of those backends is the default emacs completion system).
@@ -630,27 +704,36 @@ For Flycheck support:
     :custom (lsp-ui-flycheck-enable t))
 #+END_SRC
 
-** Extra Major Modes
+** Major Modes
 Extra modes for various types of files
 
 *** Programming
 **** Clojure
-Cider's all you need.
+Take a sip of cider.
 
 #+BEGIN_SRC emacs-lisp
   (use-package cider
     :ensure t)
 #+END_SRC
 
-Sometime the repl will spit out a ridiculously long line. I really don't need to
-see it most of the time.
+Sometimes the repl will spit out a ridiculously long line. I really don't need
+to see it most of the time.
 
 #+BEGIN_SRC emacs-lisp
   (use-package cider
     :hook (cider-repl-mode . toggle-truncate-lines))
 #+END_SRC
 
-#+RESULTS:
+a bit of linting never hurt
+
+#+BEGIN_SRC emacs-lisp
+  (use-package flycheck-clj-kondo
+    :ensure t)
+
+  (use-package clojure-mode
+    :config
+    (require 'flycheck-clj-kondo))
+#+END_SRC
 
 **** GLSL
 Yay graphics n' stuff
@@ -659,8 +742,6 @@ Yay graphics n' stuff
   (use-package glsl-mode
     :ensure t)
 #+END_SRC
-
-***** Flycheck
 
 Add a checker for flycheck
 
@@ -689,9 +770,8 @@ I'm a sadist.
   (use-package js2-mode
     :ensure t
     :custom (js2-missing-semi-one-line-override t)
-    :config
-    (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
-    (add-to-list 'interpreter-mode-alist '("node" . js2-mode)))
+    :mode "\\.js\\'"
+    :interpreter "node")
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -712,21 +792,13 @@ I'm a sadist.
     :ensure t)
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-  ;; (use-package js-comint
-    ;; :ensure t
-    ;; :bind (("C-x C-e" . js-send-last-sexp)
-           ;; ("C-c b" . js-send-buffer)
-           ;; ("C-c C-z" . js-comint-start-or-switch-to-repl)))
-#+END_SRC
-
 **** Nasm
 0110
 
 #+BEGIN_SRC emacs-lisp
-  (use-package nasm
+  (use-package nasm-mode
     :ensure t
-    :mode ("\\.\\(asm\\|s\\)$" . nasm-mode))
+    :mode "\\.\\(asm\\|s\\)$")
 #+END_SRC
 
 **** Rust
@@ -802,7 +874,7 @@ then for certain modes, make ~normal~ the inital state.
     :custom (evil-default-state 'emacs)
     :config
     (evil-mode 1)
-    (setq adb-evil-major-modes '(prog-mode org-mode))
+    (setq adb-evil-major-modes '(prog-mode text-mode))
     (mapc (lambda (mode) (evil-set-initial-state mode 'normal))
           adb-evil-major-modes))
 #+END_SRC

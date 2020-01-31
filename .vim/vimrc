@@ -1,6 +1,9 @@
 " settings
 syntax on
 set viminfo+=n~/.vim/.viminfo
+set hlsearch
+set wildmenu
+set ts=8 sts=0 et sta sw=2
 
 " keymaps
 map <C-n> :bn<CR>
@@ -13,3 +16,4 @@ colorscheme gruvbox
 
 " status line
 let g:airline_powerline_fonts = 1
+let g:airline#extensions#tabline#enabled = 1
