@@ -64,7 +64,7 @@ bindsym $mod+Mod1+Return exec firefox
 bindsym $mod+Shift+q kill
 
 # rofi
-bindsym $mod+d exec rofi -font "sans 16" -show drun
+bindsym $mod+d exec rofi -font "sans 16" -show drun -show-icons
 bindsym $mod+Mod1+d exec rofi -font "mono 16" -show run
 bindsym $mod+o exec rofi -font "mono 16" -show window
 # bindsym $mod+Shift+p exec rofi -modi 1pass:rofi-1pass -show 1pass

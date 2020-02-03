@@ -153,8 +153,11 @@ bit borked. I will turn them off for now, but should fix them later.
     :custom
     (spaceline-all-the-icons-clock-always-visible nil)
     (spaceline-all-the-icons-separator-type 'none)
+    (spaceline-all-the-icons-flycheck-alternate t)
+    (spaceline-all-the-icons-icon-set-flycheck-slim 'outline)
     :config
-    (spaceline-all-the-icons-theme))
+    (spaceline-all-the-icons-theme)
+    (spaceline-all-the-icons--setup-package-updates))
 #+END_SRC
 
 **** TODO Fix Spaceline All The Icons Seperators
@@ -334,6 +337,14 @@ Tree style exploration of file structures is very usefull.
                (";" . dired-subtree-remove)))
 #+END_SRC
 
+** Ibuffer
+better buffer management
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ibuffer
+    :bind ("C-x M-b" . ibuffer))
+#+END_SRC
+
 * Enhancements
 Things that enhance or extend Emacs's behaviour.
 
@@ -445,7 +456,7 @@ active in is defined here.
 #+BEGIN_SRC emacs-lisp
   (use-package rainbow-delimiters
     :ensure t
-    :hook ((clojure-mode emacs-lisp-mode) . rainbow-delimiters-mode))
+    :hook ((cider-repl-mode clojure-mode emacs-lisp-mode) . rainbow-delimiters-mode))
 #+END_SRC
 
 *** Terminal Here
@@ -485,6 +496,7 @@ extremely useful for developing software in Emacs.
     :delight
     :custom
     (projectile-completion-system 'ivy)
+    (projectile-switch-project-action 'projectile-commander)
     :config
     (projectile-mode)
     :bind-keymap
@@ -497,140 +509,6 @@ projectile requires ~ag.el~ in order to do project wide searches.
 #+BEGIN_SRC emacs-lisp
   (use-package ag
     :ensure t)
-#+END_SRC
-
-*** Persp Mode
-Provides tagged workspaces, like in tiling window managers. Spaceline will
-display the current workspace, so I will remove the lighter. I'm also going to
-set a bunch of config options to what I prefer.
-
-There are a lot of elisp snippets on Bad-ptr's github for configuring various
-other packages to work with persp-mode. I'm going to translate a few into
-use-package parlance, and put them in subheadings.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package persp-mode
-    :ensure t
-    :delight
-    :bind-keymap
-    ("C-x M-p" . persp-key-map)
-    :custom
-    (*persp-restrict-buffers-to* 0)
-    (persp-autokill-buffer-on-remove 'kill-weak)
-    (persp-autokill-persp-when-removed-last-buffer 'kill-auto)
-    (persp-set-read-buffer-function t)
-    (persp-auto-resume-time 0)
-    :config
-    (persp-mode 1))
-#+END_SRC
-
-**** Ivy Integration
-This configures ivy to ignore buffers that aren't in the current
-perspective. Also tells ivy not to sort the completion options to various
-pserp-mode functions. Likely becuase persp mode does this itself.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package ivy
-    :config
-    (add-to-list 'ivy-ignore-buffers
-                 #'(lambda (b)
-                     (when persp-mode
-                       (let ((persp (get-current-persp)))
-                         (if persp
-                             (not (persp-contain-buffer-p b persp))
-                           nil)))))
-    (add-to-list 'ivy-sort-functions-alist 
-                 '((persp-kill-buffer   . nil)
-                   (persp-remove-buffer . nil)
-                   (persp-add-buffer    . nil)
-                   (persp-switch        . nil)
-                   (persp-window-switch . nil)
-                   (persp-frame-switch  . nil))))
-#+END_SRC
-
-**** Projectile Integration
-Create perspectives which switching to projects etc. etc. like in spacemacs.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package persp-mode
-    :config
-    (defvar persp-mode-projectile-bridge-before-switch-selected-window-buffer nil)
-
-    (persp-def-auto-persp
-     "projectile"
-     :parameters '((dont-save-to-file . t)
-                   (persp-mode-projectile-bridge . t))
-     :hooks '(projectile-before-switch-project-hook
-              projectile-after-switch-project-hook
-              projectile-find-file-hook
-              find-file-hook)
-     :dyn-env '((after-switch-to-buffer-adv-suspend t))
-     :switch 'frame
-     :predicate
-     #'(lambda (buffer &optional state)
-         (if (eq 'projectile-before-switch-project-hook
-                 (alist-get 'hook state))
-             state
-           (and
-            projectile-mode
-            (buffer-live-p buffer)
-            (buffer-file-name buffer)
-            ;; (not git-commit-mode)
-            (projectile-project-p)
-            (or state t))))
-     :get-name
-     #'(lambda (state)
-         (if (eq 'projectile-before-switch-project-hook
-                 (alist-get 'hook state))
-             state
-           (push (cons 'persp-name
-                       (with-current-buffer (alist-get 'buffer state)
-                         (projectile-project-name)))
-                 state)
-           state))
-     :on-match
-     #'(lambda (state)
-         (let ((hook (alist-get 'hook state))
-               (persp (alist-get 'persp state))
-               (buffer (alist-get 'buffer state)))
-           (case hook
-             (projectile-before-switch-project-hook
-              (let ((win (if (minibuffer-window-active-p (selected-window))
-                             (minibuffer-selected-window)
-                           (selected-window))))
-                (when (window-live-p win)
-                  (setq persp-mode-projectile-bridge-before-switch-selected-window-buffer
-                        (window-buffer win)))))
-
-             (projectile-after-switch-project-hook
-              (when (buffer-live-p
-                     persp-mode-projectile-bridge-before-switch-selected-window-buffer)
-                (let ((win (selected-window)))
-                  (unless (eq (window-buffer win)
-                              persp-mode-projectile-bridge-before-switch-selected-window-buffer)
-                    (set-window-buffer
-                     win persp-mode-projectile-bridge-before-switch-selected-window-buffer)))))
-
-             (find-file-hook
-              (setcdr (assq :switch state) nil)))
-           (if (case hook
-                 (projectile-before-switch-project-hook nil)
-                 (t t))
-               (persp--auto-persp-default-on-match state)
-             (setcdr (assq :after-match state) nil)))
-         state)
-     :after-match
-     #'(lambda (state)
-         (when (eq 'find-file-hook (alist-get 'hook state))
-           (run-at-time 0.5 nil
-                        #'(lambda (buf persp)
-                            (when (and (eq persp (get-current-persp))
-                                       (not (eq buf (window-buffer (selected-window)))))
-                              ;; (switch-to-buffer buf)
-                              (persp-add-buffer buf persp t nil)))
-                        (alist-get 'buffer state)
-                        (get-current-persp)))
-         (persp--auto-persp-default-after-match state))))
 #+END_SRC
 
 ** IDE Features
@@ -874,9 +752,10 @@ then for certain modes, make ~normal~ the inital state.
     :custom (evil-default-state 'emacs)
     :config
     (evil-mode 1)
-    (setq adb-evil-major-modes '(prog-mode text-mode))
     (mapc (lambda (mode) (evil-set-initial-state mode 'normal))
-          adb-evil-major-modes))
+          '(prog-mode
+            text-mode
+            cider-repl-mode)))
 #+END_SRC
 
 *** Undo Tree
@@ -905,7 +784,7 @@ Modal lispy editing.
     :ensure t
     :delight "CP"
     :custom (evil-mode-beyond-eol t) ; as suggested in readme
-    :hook ((clojure-mode emacs-lisp-mode) . evil-cleverparens-mode))
+    :hook ((cider-repl-mode clojure-mode emacs-lisp-mode) . evil-cleverparens-mode))
 
   (use-package evil-cleverparens-text-objects) ; to get forms/comments/defuns as text-objects
 #+END_SRC
