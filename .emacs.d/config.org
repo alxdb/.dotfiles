@@ -155,12 +155,21 @@ bit borked. I will turn them off for now, but should fix them later.
     (spaceline-all-the-icons-separator-type 'none)
     (spaceline-all-the-icons-flycheck-alternate t)
     (spaceline-all-the-icons-icon-set-flycheck-slim 'outline)
+    (spaceline-all-the-icons-slim-render nil)
     :config
     (spaceline-all-the-icons-theme)
     (spaceline-all-the-icons--setup-package-updates))
 #+END_SRC
 
 **** TODO Fix Spaceline All The Icons Seperators
+**** TODO Fix Spaceline All The Icons Incorrect and Missing Icons
+
+This seems to be due to a conflict between all-the-icons and file-icons.
+
+using the commands outlined in
+https://github.com/domtronn/all-the-icons.el/blob/master/README.md#troubleshooting
+to change the default fontset, I can switch between some files having the
+correct icons, and others not.
 
 ** Tweaks
 Miscellaneous changes to mould Emacs to my liking.
@@ -364,7 +373,7 @@ using a timeout.
     :delight
     :custom
     (which-key-show-early-on-C-h t)
-    (which-key-idle-delay 0.2)
+    (which-key-idle-delay 1.0)
     (which-key-idle-secondary-delay 0.05)
     :config
     (which-key-mode))
@@ -611,6 +620,16 @@ a bit of linting never hurt
   (use-package clojure-mode
     :config
     (require 'flycheck-clj-kondo))
+#+END_SRC
+
+A more modern line length
+
+#+BEGIN_SRC emacs-lisp
+  (use-package clojure-mode
+    :hook (clojure-mode . (lambda ()
+                            (make-local-variable 'writeroom-width)
+                            (setq writeroom-width 120)
+                            (set-fill-column 120))))
 #+END_SRC
 
 **** GLSL

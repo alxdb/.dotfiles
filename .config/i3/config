@@ -10,7 +10,7 @@ set $mod Mod4
 # bindsym XF86AudioLowerVolume exec "pamixer -d 5"
 # bindsym XF86AudioMute exec "pamixer -t"
 
-# bindsym XF86AudioPlay exec "playerctl play-pause"
+bindsym XF86AudioPlay exec "mpc toggle"
 # bindsym XF86AudioNext exec "playerctl next"
 # bindsym XF86AudioPrev exec "playerctl previous"
 # bindsym XF86AudioStop exec "playerctl stop"
@@ -67,6 +67,7 @@ bindsym $mod+Shift+q kill
 bindsym $mod+d exec rofi -font "sans 16" -show drun -show-icons
 bindsym $mod+Mod1+d exec rofi -font "mono 16" -show run
 bindsym $mod+o exec rofi -font "mono 16" -show window
+bindsym $mod+Mod1+e exec rofi -show emoji -modi emoji
 # bindsym $mod+Shift+p exec rofi -modi 1pass:rofi-1pass -show 1pass
 
 # change focus
