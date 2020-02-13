@@ -33,7 +33,7 @@ markup=none
 
 # Updates
 [arch-update]
-command=$SCRIPT_DIR/$BLOCK_NAME/$BLOCK_NAME.py
+command=./$BLOCK_NAME
 markup=pango
 interval=30
 

@@ -1,0 +1,10 @@
+#!/bin/sh
+
+ws_n=$(i3-msg -t get_workspaces | jq 'map(select(.focused)) | .[].num')
+name=$(rofi -font "sans 16" -dmenu -p "rename workspace to" -lines 0)
+
+if [ -z $name ]; then
+  i3-msg "rename workspace to $ws_n"
+else
+  i3-msg "rename workspace to \"$ws_n: $name\""
+fi

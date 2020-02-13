@@ -285,7 +285,7 @@ I'm going to edit this file a lot, it would be convenient to have a keybinding t
     :bind
     ("C-x c" . (lambda ()
                  (interactive)
-                 (find-file "~/.emacs.d/config.org"))))
+                 (find-file (concat user-emacs-directory "/config.org")))))
 #+END_SRC
 
 ** Org-mode

@@ -20,7 +20,7 @@ set $inner_gap 20
 set $outer_gap 0
 gaps inner $inner_gap
 gaps outer $outer_gap
-bindsym $mod+g exec --no-startup-id "~/.config/i3/scripts/toggle-gaps $inner_gap $outer_gap"
+bindsym $mod+g exec --no-startup-id "~/.config/i3/scripts/toggle_gaps $inner_gap $outer_gap"
 
 # Colorscheme (gruvbox-dark)
 set $bg		#282828
