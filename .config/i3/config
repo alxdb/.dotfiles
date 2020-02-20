@@ -1,7 +1,7 @@
 # i3 config file alxdb
 # vim: ft=i3config:
 
-font pango:monospace 10
+font pango:monospace 12
 
 # System keyboard bindings
 set $mod Mod4
@@ -42,8 +42,8 @@ set $gray	#a89984
 set $dgray	#928374
 
 # colorclass		border	backg	text	ind		child_b
-client.focused		$fblue	$fblue	$fg		$blue	$fblue
-client.focused_inactive	$sbg	$sbg	$fg		$gray	$sbg
+client.focused		$fblue	$fblue	$fg		$bg	$fblue
+client.focused_inactive	$sbg	$sbg	$fg		$hbg	$sbg
 client.unfocused	$hbg	$hbg	$fg		$dgray	$hbg
 client.urgent		$red	$red	$bg1	$red	$red
 client.background	$bg
@@ -83,7 +83,7 @@ bindsym $mod+Shift+$up move up
 bindsym $mod+Shift+$right move right
 
 # toggle split direction
-bindsym $mod+t split toggle
+# bindsym $mod+t split toggle
 
 # enter fullscreen mode for the focused container
 bindsym $mod+f fullscreen toggle
