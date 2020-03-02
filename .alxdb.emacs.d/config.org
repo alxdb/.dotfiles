@@ -119,7 +119,7 @@ it do that.
 #+BEGIN_SRC emacs-lisp
   (use-package emacs
     :custom-face
-    (default ((t (:family "Monospace" :height 90)))))
+    (default ((t (:family "Monospace" :height 100)))))
 #+END_SRC
 
 *** Spaceline
@@ -132,7 +132,7 @@ The default Emacs modeline is kinda gross. Let's fix that.
     :custom
     (spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
     :custom-face
-    (mode-line ((t (:foreground "#ebdbb2" :background "#32302f"))))
+    (mode-line ((t (:foreground "#ebdbb2" :background "#32302f" :height 120))))
     (powerline-active1 ((t (:foreground "#d5c4a1" :background "#1c1c1c"))))
     (powerline-active2 ((t (:background "#504945"))))
     (mode-line-inactive ((t (:background "#1c1c1c"))))
@@ -455,7 +455,8 @@ Distraction free editing.
     (writeroom-maximize-window nil)
     (writeroom-mode-line t)
     (writeroom-bottom-divider-width 0)
-    (writeroom-global-effects '()))
+    (writeroom-global-effects '())
+    (writeroom-width 80))
 #+END_SRC
 
 *** Rainbow Delimiters

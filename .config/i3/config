@@ -8,12 +8,11 @@ set $mod Mod4
 
 # bindsym XF86AudioRaiseVolume exec "pamixer -i 5"
 # bindsym XF86AudioLowerVolume exec "pamixer -d 5"
-# bindsym XF86AudioMute exec "pamixer -t"
+bindsym XF86AudioMute exec "pamixer -t"
 
 bindsym XF86AudioPlay exec "mpc toggle"
-# bindsym XF86AudioNext exec "playerctl next"
-# bindsym XF86AudioPrev exec "playerctl previous"
-# bindsym XF86AudioStop exec "playerctl stop"
+bindsym XF86AudioNext exec "mpc next"
+bindsym XF86AudioPrev exec "mpc previous"
 
 # Gaps
 set $inner_gap 20
@@ -24,12 +23,19 @@ bindsym $mod+g exec --no-startup-id "~/.config/i3/scripts/toggle_gaps $inner_gap
 
 # Colorscheme (gruvbox-dark)
 set $bg		#282828
+#set $bg		#fbf1c7
 set $hbg	#1d2021
+#set $hbg	#f9f5d7
 set $sbg	#32302f
+#set $sbg	#f2e5bc
 set $bg1	#3c3836
+#set $bg1	#ebdbb2
 set $bg2	#504945
+#set $bg2	#d5c4a1
 set $fg		#ebdbb2
+#set $fg		#3c3836
 set $hfg	#f9f5d7
+#set $hfg	#282828
 set $red	#cc241d
 set $fred	#fb4934
 set $green	#98971a
@@ -83,7 +89,7 @@ bindsym $mod+Shift+$up move up
 bindsym $mod+Shift+$right move right
 
 # toggle split direction
-# bindsym $mod+t split toggle
+bindsym $mod+t split toggle
 
 # enter fullscreen mode for the focused container
 bindsym $mod+f fullscreen toggle
@@ -101,10 +107,9 @@ bindsym $mod+space focus mode_toggle
 
 # focus the parent container
 bindsym $mod+a focus parent
-bindsym $mod+Shift+a focus child
 
 # focus the child container
-#bindsym $mod+d focus child
+bindsym $mod+Shift+a focus child
 
 # move the currently focused window to the scratchpad
 bindsym $mod+Shift+minus move scratchpad
