@@ -3,3 +3,5 @@
 	name = Alexander Davidson Bryan
 [diff]
 	tool = vimdiff
+[github]
+	user = alxdb

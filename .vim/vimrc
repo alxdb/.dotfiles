@@ -3,7 +3,7 @@ source ~/.vim/plugins.vim
 
 " settings
 syntax on
-set viminfo+=n~/.vim/.viminfo
+let g:is_bash = 1
 
 " keymaps
 map <C-n> :bn<CR>
@@ -12,7 +12,10 @@ map <C-p> :bp<CR>
 " colorscheme
 set bg=dark
 let g:gruvbox_contrast_dark = "hard"
+let g:gruvbox_contrast_light = "medium"
 colorscheme gruvbox
+hi Normal ctermbg=none
+
 
 " status line
 let g:airline_powerline_fonts = 1
