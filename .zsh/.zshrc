@@ -9,6 +9,8 @@ alias dotf='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 # screw you bitwig... (I love you really)
 alias ls='command ls -IBitwig\ Studio --color=auto -v'
 alias ll='command ls -IBitwig\ Studio -l --color=auto -v'
+# docker-machine alias
+alias dm='eval $(docker-machine env)'
 
 # git info styling
 zstyle ':vcs_info:*' enable git

@@ -8,11 +8,14 @@ set $mod Mod4
 
 # bindsym XF86AudioRaiseVolume exec "pamixer -i 5"
 # bindsym XF86AudioLowerVolume exec "pamixer -d 5"
-bindsym XF86AudioMute exec "pamixer -t"
+# bindsym XF86AudioMute exec "pamixer -t"
 
-bindsym XF86AudioPlay exec "mpc toggle"
-bindsym XF86AudioNext exec "mpc next"
-bindsym XF86AudioPrev exec "mpc previous"
+# bindsym XF86AudioPlay exec "mpc toggle"
+bindsym XF86AudioPlay exec "playerctl play-pause"
+# bindsym XF86AudioNext exec "mpc next"
+bindsym XF86AudioNext exec "playerctl next"
+# bindsym XF86AudioPrev exec "mpc previous"
+bindsym XF86AudioPrev exec "playerctl previous"
 
 # Gaps
 set $inner_gap 20
@@ -23,7 +26,7 @@ bindsym $mod+g exec --no-startup-id "~/.config/i3/scripts/toggle_gaps $inner_gap
 
 # Colorscheme (gruvbox-dark)
 set $bg		#282828
-#set $bg		#fbf1c7
+#set $bg	#fbf1c7
 set $hbg	#1d2021
 #set $hbg	#f9f5d7
 set $sbg	#32302f
@@ -33,7 +36,7 @@ set $bg1	#3c3836
 set $bg2	#504945
 #set $bg2	#d5c4a1
 set $fg		#ebdbb2
-#set $fg		#3c3836
+#set $fg	#3c3836
 set $hfg	#f9f5d7
 #set $hfg	#282828
 set $red	#cc241d
@@ -210,7 +213,7 @@ bar {
 # window specific settings
 for_window [class="purr-data"] floating enable
 for_window [class="Qjackctl" instance="qjackctl" id=73400326] floating enable
-# for_window [class="Spotify" instance="spotify"] floating enable
-# for_window [class="Spotify" instance="spotify"] resize set 2000 2000
-# for_window [class="Spotify" instance="spotify"] move window position center
-# for_window [class="Spotify" instance="spotify"] move scratchpad scratchpad show
+for_window [class="Spotify" instance="spotify"] floating enable
+for_window [class="Spotify" instance="spotify"] resize set 2000 2000
+for_window [class="Spotify" instance="spotify"] move window position center
+for_window [class="Spotify" instance="spotify"] move scratchpad scratchpad show
