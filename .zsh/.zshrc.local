@@ -1,0 +1,23 @@
+# Aliases
+# ef stands for edit file (more accurate than vi, but just as concise)
+alias ef=$EDITOR
+alias vf="vim -R" # view file
+alias ec="emacsclient" # emacs client
+# this allows vcs for any file in home, kept in a repo called ~/.dotfiles
+alias dotf='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+# java version switching
+alias exp_java8='export JAVA_HOME=`/usr/libexec/java_home -v 1.8`'
+
+# git info styling
+zstyle ':vcs_info:*' enable git
+zstyle ':vcs_info:git*' formats "%F{cyan}%r%f(%F{blue}%b%f)"
+
+# make everything gruvy
+source $HOME/.vim/plugged/gruvbox/gruvbox_256palette_osx.sh
+
+# this must be at the end of the file
+ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern line)
+source "/usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+source "/usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh"
+bindkey -M emacs '^P' history-substring-search-up
+bindkey -M emacs '^N' history-substring-search-down
