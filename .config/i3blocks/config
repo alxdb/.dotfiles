@@ -89,7 +89,6 @@ interval=30
 # The address can be forced to IPv4 or IPv6 with -4 or -6 switches.
 [iface]
 IFACE=enp5s0
-color=#ebdbb2
 interval=10
 separator=false
 

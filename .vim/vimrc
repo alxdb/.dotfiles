@@ -14,6 +14,7 @@ let g:gruvbox_italic = 1
 let g:gruvbox_contrast_dark = "hard"
 let g:gruvbox_contrast_light = "soft"
 set bg=dark
+" set bg=light
 colorscheme gruvbox
 
 " status line
