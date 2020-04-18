@@ -37,6 +37,15 @@ command=./$BLOCK_NAME
 markup=pango
 interval=30
 
+# Generic media player support
+#
+# This displays "ARTIST - SONG" if a music is playing.
+# Supported players are: spotify, vlc, audacious, xmms2, mplayer, and others.
+[mediaplayer]
+instance=spotify
+interval=5
+signal=10
+
 # CPU usage
 #
 # The script may be called with -w and -c switches to specify thresholds,
@@ -102,15 +111,6 @@ interval=5
 [time]
 command=date '+%a %d %b %Y %I:%M:%S %p '
 interval=1
-
-# Generic media player support
-#
-# This displays "ARTIST - SONG" if a music is playing.
-# Supported players are: spotify, vlc, audacious, xmms2, mplayer, and others.
-#[mediaplayer]
-#instance=spotify
-#interval=5
-#signal=10
 
 # OpenVPN support
 #

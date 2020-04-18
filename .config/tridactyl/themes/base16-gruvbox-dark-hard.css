@@ -138,9 +138,9 @@
     background: var(--tridactyl-bg) !important;
     border: unset !important;
     border: 1px var(--base0B) solid !important;
-    font-size: 12pt !important;
+    font-size: 8pt !important;
     /*font-weight: 200 !important;*/
-    padding: 0.8ex !important;
+    padding: 1.0ex !important;
 }
 
 #completions .focused {    background: var(--base0B);

@@ -12,6 +12,8 @@ alias ls='command ls -IBitwig\ Studio --color=auto -v'
 alias ll='command ls -IBitwig\ Studio -l --color=auto -v'
 # docker-machine alias
 alias dm='eval $(docker-machine env)'
+# ssh ignore alacritty
+alias ssh='TERM=xterm-256color ssh'
 
 # git info styling
 zstyle ':vcs_info:*' enable git
