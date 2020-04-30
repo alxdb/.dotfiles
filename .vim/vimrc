@@ -4,18 +4,50 @@ set viminfo+=n~/.vim/.viminfo
 set hlsearch
 set wildmenu
 set autoindent
+set number
 filetype plugin indent on
-" set ts=8 sts=0 et sta sw=2
+
+" tab settings
+set ts=4 sw=4
 
 " ctags
-set tags+=~/.vim/ctags/tags
+set tags+=~/.vim/ctags/cpp
+set tags+=~/.vim/ctags/vulkan
+set tags+=~/.vim/ctags/sdl
 " cinoptions
+set cindent
 set cino=(s,m1
-" keymaps
+set cino+=g0
+" cpp-enhanced-highlight
+let g:cpp_class_scope_highlight = 1
+let g:cpp_member_variable_highlight = 1
+let g:cpp_class_decl_highlight = 1
+" fuzzy find
+set path+=**
+
+" language client
+let g:lsc_server_commands = {
+			\	'cpp': {
+			\		'command': 'ccls',
+			\		'suppress_stderr': v:true
+			\	},
+			\	'c': {
+			\		'command': 'ccls',
+			\ 		'suppress_stderr': v:true
+			\	},
+			\	'rust': 'rls'
+			\}
+let g:lsc_auto_map = v:true
+
+"" keymaps
 map <C-n> :bn<CR>
 map <C-p> :bp<CR>
 let mapleader=" "
-nnoremap <leader>m :Make<CR>
+" vim-dispatch
+nnoremap <leader>m :Make!<CR>
+" clang-format
+autocmd FileType c,cpp nnoremap == :<C-u>ClangFormat<CR>
+
 
 " colorscheme
 let g:gruvbox_italic = 1
@@ -30,6 +62,10 @@ hi Function cterm=bold ctermfg=Blue guifg=#83a598
 hi Delimiter ctermfg=White
 hi cOperator ctermfg=White
 
+" airline term status
+hi airline_term ctermfg=White ctermbg=Black
+hi airline_term_active ctermfg=White ctermbg=Black
+hi airline_term_active ctermfg=White ctermbg=Black
+
 " status line
 let g:airline_powerline_fonts = 1
-let g:airline#extensions#tabline#enabled = 1
