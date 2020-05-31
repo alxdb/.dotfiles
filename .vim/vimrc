@@ -3,12 +3,14 @@ syntax on
 set viminfo+=n~/.vim/.viminfo
 set hlsearch
 set wildmenu
+set wildmode=longest:full
 set autoindent
 set number
+set completeopt-=preview
 filetype plugin indent on
 
 " tab settings
-set ts=4 sw=4
+set ts=2 sw=2 et
 
 " ctags
 set tags+=~/.vim/ctags/cpp
@@ -25,19 +27,43 @@ let g:cpp_class_decl_highlight = 1
 " fuzzy find
 set path+=**
 
+" vim man
+runtime ftplugin/man.vim
+
+" closetag
+let g:closetag_filenames = '*.html,*.xhtml,*.phtml'
+let g:closetag_xhtml_filenames = '*.xhtml,*.jsx'
+let g:closetag_shortcut = '>'
+
 " language client
 let g:lsc_server_commands = {
-			\	'cpp': {
-			\		'command': 'ccls',
-			\		'suppress_stderr': v:true
-			\	},
-			\	'c': {
-			\		'command': 'ccls',
-			\ 		'suppress_stderr': v:true
-			\	},
-			\	'rust': 'rls'
-			\}
-let g:lsc_auto_map = v:true
+                  \  'cpp': {
+                  \    'command': 'ccls',
+                  \    'suppress_stderr': v:true
+                  \  },
+                  \  'c': {
+                  \    'command': 'ccls',
+                  \     'suppress_stderr': v:true
+                  \  },
+                  \  'rust': 'rls'
+                  \}
+let g:lsc_auto_map = {
+                  \  'GoToDefinition': '<C-]>',
+                  \  'GoToDefinitionSplit': ['<C-W>]', '<C-W><C-]>'],
+                  \  'FindReferences': 'gr',
+                  \  'NextReference': '<C-n>',
+                  \  'FindImplementations': 'gI',
+                  \  'FindCodeActions': 'ga',
+                  \  'Rename': 'gR',
+                  \  'ShowHover': v:true,
+                  \  'DocumentSymbol': 'go',
+                  \  'WorkspaceSymbol': 'gS',
+                  \  'SignatureHelp': 'gm',
+                  \  'Completion': 'completefunc',
+                  \}
+
+" ctrlp
+let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standard']
 
 "" keymaps
 map <C-n> :bn<CR>
@@ -45,9 +71,12 @@ map <C-p> :bp<CR>
 let mapleader=" "
 " vim-dispatch
 nnoremap <leader>m :Make!<CR>
+" LSC
+nnoremap <leader>d :LSClientAllDiagnostics<CR>
 " clang-format
 autocmd FileType c,cpp nnoremap == :<C-u>ClangFormat<CR>
-
+" scons
+au BufRead,BufNewFile SCons* set ft=scons
 
 " colorscheme
 let g:gruvbox_italic = 1

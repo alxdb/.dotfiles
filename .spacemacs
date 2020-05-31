@@ -60,15 +60,21 @@ This function should only modify configuration layer settings."
               clojure-enable-fancify-symbols t
               clojure-enable-linters 'clj-kondo
               clojure-enable-clj-refactor t)
+     gpu
      haskell
      rust
      ron
      latex
-     c-c++
+     (c-c++ :variables
+            c-c++-backend 'lsp-ccls
+            c-c++-enable-clang-format-on-save t
+            c-c++-lsp-enable-semantic-highlight t
+            c-c++-lsp-semantic-highlight-method 'overlay)
      (cmake :variables
             cmake-enable-cmake-ide-support t)
      javascript
      html
+     ipython-notebook
      )
 
    ;; List of additional packages that will be installed without being
@@ -78,7 +84,7 @@ This function should only modify configuration layer settings."
    ;; To use a local version of a package, use the `:location' property:
    ;; '(your-package :location "~/path/to/your-package/")
    ;; Also include the dependencies as they will not be resolved automatically.
-   dotspacemacs-additional-packages '(cdlatex)
+   dotspacemacs-additional-packages '(cdlatex sage-shell-mode)
 
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
@@ -118,9 +124,9 @@ It should only modify the values of Spacemacs settings."
    ;; portable dumper in the cache directory under dumps sub-directory.
    ;; To load it when starting Emacs add the parameter `--dump-file'
    ;; when invoking Emacs 27.1 executable on the command line, for instance:
-   ;;   ./emacs --dump-file=~/.emacs.d/.cache/dumps/spacemacs.pdmp
-   ;; (default spacemacs.pdmp)
-   dotspacemacs-emacs-dumper-dump-file "spacemacs.pdmp"
+   ;;   ./emacs --dump-file=$HOME/.emacs.d/.cache/dumps/spacemacs-27.1.pdmp
+   ;; (default spacemacs-27.1.pdmp)
+   dotspacemacs-emacs-dumper-dump-file (format "spacemacs-%s.pdmp" emacs-version)
 
    ;; If non-nil ELPA repositories are contacted via HTTPS whenever it's
    ;; possible. Set it to nil if you have no way to use HTTPS in your
@@ -139,6 +145,13 @@ It should only modify the values of Spacemacs settings."
    ;; performance issues due to garbage collection operations.
    ;; (default '(100000000 0.1))
    dotspacemacs-gc-cons '(100000000 0.1)
+
+   ;; Set `read-process-output-max' when startup finishes.
+   ;; This defines how much data is read from a foreign process.
+   ;; Setting this >= 1 MB should increase performance for lsp servers
+   ;; in emacs 27.
+   ;; (default (* 1024 1024))
+   dotspacemacs-read-process-output-max (* 1024 1024)
 
    ;; If non-nil then Spacelpa repository is the primary source to install
    ;; a locked version of packages. If nil then Spacemacs will install the
@@ -248,8 +261,10 @@ It should only modify the values of Spacemacs settings."
    dotspacemacs-major-mode-leader-key ","
 
    ;; Major mode leader key accessible in `emacs state' and `insert state'.
-   ;; (default "C-M-m")
-   dotspacemacs-major-mode-emacs-leader-key "C-M-m"
+   ;; (default "C-M-m" for terminal mode, "<M-return>" for GUI mode).
+   ;; Thus M-RET should work as leader key in both GUI and terminal modes.
+   ;; C-M-m also should work in terminal mode, but not in GUI mode.
+   dotspacemacs-major-mode-emacs-leader-key (if window-system "<M-return>" "C-M-m")
 
    ;; These variables control whether separate commands are bound in the GUI to
    ;; the key pairs `C-i', `TAB' and `C-m', `RET'.
@@ -509,6 +524,7 @@ This function is called at the very end of Spacemacs initialization."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ein:output-area-inlined-images t)
  '(evil-want-Y-yank-to-eol nil)
  '(helm-completion-style (quote emacs))
  '(hl-todo-keyword-faces
@@ -541,7 +557,30 @@ This function is called at the very end of Spacemacs initialization."
  '(powerline-height 39)
  '(safe-local-variable-values
    (quote
-    ((eval setq projectile-project-test-cmd
+    ((cmake-ide-build-dir . "~/src/minirend/build/")
+     (cmake-ide-project-dir . "~/src/minirend/")
+     (cmake-ide-project-dir eval load-file-name)
+     (cmake-ide-build-dir eval
+                          (concat cmake-ide-project-dir "build/"))
+     (cmake-ide-build-dir concat cmake-ide-project-dir "build/")
+     (cmake-ide-project-dir . load-file-name)
+     (cmake-ide-project-dir function load-file-name)
+     (cmake-ide-project-dir function
+                            (or load-file-name buffer-file-name))
+     (cmake-ide-cmake-opts . "-DCMAKE_BUILD_TYPE=Debug")
+     (cmake-ide-build-dir concat cmake-ide-project-dir "/build/")
+     (cmake-ide-project-dir or load-file-name buffer-file-name)
+     (helm-ctest-dir . "build")
+     (helm-ctest-dir . cmake-ide-build-dir)
+     (eval setq projectile-project-test-cmd
+           (function helm-ctest)
+           projectile-project-compilation-cmd "cmake --build build" projectile-project-compilation-dir "build" helm-make-build-dir
+           (projectile-compilation-dir)
+           helm-ctest-dir
+           (projectile-compilation-dir))
+     (projectile-project-run-cmd . "build/examples/triangle")
+     (projectile-project-name . "Minirend")
+     (eval setq projectile-project-test-cmd
            (function helm-ctest)
            projectile-project-compilation-cmd
            (function helm-make-projectile)
