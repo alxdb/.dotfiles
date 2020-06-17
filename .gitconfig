@@ -3,5 +3,8 @@
 [user]
 	email = alxdb@protonmail.com
 	name = Alexander Davidson Bryan
+	signingkey = 3B3175F7132A5151FDC6915313D0964DD3808231
 [diff]
 	tool = vimdiff
+[commit]
+	gpgsign = true

@@ -43,9 +43,14 @@ let g:lsc_server_commands = {
                   \  },
                   \  'c': {
                   \    'command': 'ccls',
-                  \     'suppress_stderr': v:true
+                  \    'suppress_stderr': v:true
                   \  },
-                  \  'rust': 'rls'
+                  \  'haskell': {
+                  \    'command': 'hie-wrapper',
+                  \    'suppress_stderr': v:true
+                  \  },
+                  \  'rust': 'rls',
+                  \  'python': 'pyls'
                   \}
 let g:lsc_auto_map = {
                   \  'GoToDefinition': '<C-]>',

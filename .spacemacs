@@ -41,14 +41,12 @@ This function should only modify configuration layer settings."
      emacs-lisp
      git
      helm
-     ;; lsp
-     ;; markdown
-     multiple-cursors
+     markdown
+     ;; multiple-cursors
      org
      (shell :variables
             shell-default-height 30
             shell-default-position 'bottom)
-     ;; spell-checking
      syntax-checking
      version-control
      treemacs
@@ -56,25 +54,30 @@ This function should only modify configuration layer settings."
      lsp
      semantic
      ;; languages
-     (clojure :variables
-              clojure-enable-fancify-symbols t
-              clojure-enable-linters 'clj-kondo
-              clojure-enable-clj-refactor t)
-     gpu
-     haskell
-     rust
-     ron
-     latex
      (c-c++ :variables
             c-c++-backend 'lsp-ccls
             c-c++-enable-clang-format-on-save t
             c-c++-lsp-enable-semantic-highlight t
             c-c++-lsp-semantic-highlight-method 'overlay)
+     (clojure :variables
+              clojure-enable-fancify-symbols t
+              clojure-enable-linters 'clj-kondo
+              clojure-enable-clj-refactor t)
      (cmake :variables
             cmake-enable-cmake-ide-support t)
-     javascript
+     gpu
+     (haskell :variables
+              haskell-completion-backend 'lsp)
      html
      ipython-notebook
+     javascript
+     latex
+     python
+     rust
+     ron
+     (scala :variables
+            scala-backend 'scala-metals)
+     yaml
      )
 
    ;; List of additional packages that will be installed without being
