@@ -17,9 +17,10 @@ set tags+=~/.vim/ctags/cpp
 set tags+=~/.vim/ctags/vulkan
 set tags+=~/.vim/ctags/sdl
 " cinoptions
-set cindent
-set cino=(s,m1
-set cino+=g0
+" set cindent
+" set cino=(s,m1
+" set cino+=g0
+set smartindent
 " cpp-enhanced-highlight
 let g:cpp_class_scope_highlight = 1
 let g:cpp_member_variable_highlight = 1
@@ -37,35 +38,35 @@ let g:closetag_shortcut = '>'
 
 " language client
 let g:lsc_server_commands = {
-                  \  'cpp': {
-                  \    'command': 'ccls',
-                  \    'suppress_stderr': v:true
-                  \  },
-                  \  'c': {
-                  \    'command': 'ccls',
-                  \    'suppress_stderr': v:true
-                  \  },
-                  \  'haskell': {
-                  \    'command': 'hie-wrapper',
-                  \    'suppress_stderr': v:true
-                  \  },
-                  \  'rust': 'rls',
-                  \  'python': 'pyls'
-                  \}
+\ 'cpp': {
+\   'command': 'ccls',
+\   'suppress_stderr': v:true
+\ },
+\ 'c': {
+\   'command': 'ccls',
+\   'suppress_stderr': v:true
+\ },
+\ 'haskell': {
+\   'command': 'hie-wrapper',
+\   'suppress_stderr': v:true
+\ },
+\ 'rust': 'rls',
+\ 'python': 'pyls',
+\}
 let g:lsc_auto_map = {
-                  \  'GoToDefinition': '<C-]>',
-                  \  'GoToDefinitionSplit': ['<C-W>]', '<C-W><C-]>'],
-                  \  'FindReferences': 'gr',
-                  \  'NextReference': '<C-n>',
-                  \  'FindImplementations': 'gI',
-                  \  'FindCodeActions': 'ga',
-                  \  'Rename': 'gR',
-                  \  'ShowHover': v:true,
-                  \  'DocumentSymbol': 'go',
-                  \  'WorkspaceSymbol': 'gS',
-                  \  'SignatureHelp': 'gm',
-                  \  'Completion': 'completefunc',
-                  \}
+\ 'GoToDefinition': '<C-]>',
+\ 'GoToDefinitionSplit': ['<C-W>]', '<C-W><C-]>'],
+\ 'FindReferences': 'gr',
+\ 'NextReference': '<C-n>',
+\ 'FindImplementations': 'gI',
+\ 'FindCodeActions': 'ga',
+\ 'Rename': 'gR',
+\ 'ShowHover': v:true,
+\ 'DocumentSymbol': 'go',
+\ 'WorkspaceSymbol': 'gS',
+\ 'SignatureHelp': 'gm',
+\ 'Completion': 'completefunc',
+\}
 
 " ctrlp
 let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standard']
