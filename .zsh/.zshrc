@@ -1,4 +1,10 @@
 # Aliases
+
+# set editor for emacs term to... emacs!
+if [ $TERM = eterm-color ]; then
+  export EDITOR=emacsclient
+fi
+
 # ef stands for edit file (more accurate than vi, but just as concise)
 alias ef=$EDITOR
 alias vf="vim -R" # view file
@@ -21,8 +27,10 @@ zstyle ':vcs_info:*' enable git
 zstyle ':vcs_info:git*' check-for-changes true
 zstyle ':vcs_info:git*' formats "%F{cyan}%r%f(%F{blue}%b%f)%F{yellow}%u%f%F{green}%c%f"
 
-# make everything gruvy
-/usr/share/vim/vimfiles/gruvbox_256palette.sh
+# make everything gruvy, but not in emacs (spews junk)
+if [ ! $TERM = eterm-color ]; then
+  /usr/share/vim/vimfiles/gruvbox_256palette.sh
+fi
 
 # this must be at the end of the file
 # syntax highlighting

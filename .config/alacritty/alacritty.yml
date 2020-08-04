@@ -31,6 +31,8 @@ window:
 
   # Spread additional padding evenly around the terminal content.
   dynamic_padding: true
+  # Allow terminal applications to change Alacritty's window title.
+  dynamic_title: true
 
   # Window decorations
   #
@@ -168,7 +170,7 @@ colors:
 #     background: '0xfbf1c7'
 #     # soft contrast: background = '0xf2e5bc'
 #     foreground: '0x3c3836'
-# 
+#
 #   # Normal colors
 #   normal:
 #     black:   '0xfbf1c7'
@@ -179,7 +181,7 @@ colors:
 #     magenta: '0xb16286'
 #     cyan:    '0x689d6a'
 #     white:   '0x7c6f64'
-# 
+#
 #   # Bright colors
 #   bright:
 #     black:   '0x928374'
@@ -212,7 +214,7 @@ colors:
 #   - Linear
 #
 # Specifying a `duration` of `0` will disable the visual bell.
-visual_bell:
+bell:
   animation: EaseOutExpo
   duration: 0
   color: '0xffffff'
@@ -276,9 +278,6 @@ selection:
 
   # When set to `true`, selected text will be copied to the primary clipboard.
   save_to_clipboard: false
-
-# Allow terminal applications to change Alacritty's window title.
-dynamic_title: true
 
 cursor:
   # Cursor style

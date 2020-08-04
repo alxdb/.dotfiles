@@ -18,7 +18,7 @@ bindsym XF86AudioNext exec "playerctl next"
 bindsym XF86AudioPrev exec "playerctl previous"
 
 # Gaps
-set $inner_gap 20
+set $inner_gap 10
 set $outer_gap 0
 gaps inner $inner_gap
 gaps outer $outer_gap
@@ -189,30 +189,33 @@ mode "resize" {
 	bindsym $mod+r mode "default"
 }
 
-bindsym $mod+r mode "resize" 
+bindsym $mod+r mode "resize"
 
+# using polybar
+exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 # Bar Settings
-bindsym $mod+Shift+i bar mode invisible
-bindsym $mod+Shift+d bar mode dock
-bar {
-	mode dock
-	hidden_state hide
-	position top
-	status_command i3blocks
-	colors {
-		background $hbg
-		statusline $fg
-		separator  $bg2
-
-		focused_workspace	$hbg	$fg	$hbg
-		inactive_workspace	$hbg	$sbg	$fg
-		urgent_workspace	$red	$red	$hbg
-	}
-}
+bindsym $mod+Shift+i exec "killall -q polybar"
+bindsym $mod+Shift+d exec "polybar main" 
+# bar {
+# 	mode dock
+# 	hidden_state hide
+# 	position top
+# 	status_command i3blocks
+# 	colors {
+# 		background $hbg
+# 		statusline $fg
+# 		separator  $bg2
+#
+# 		focused_workspace	$hbg	$fg	$hbg
+# 		inactive_workspace	$hbg	$sbg	$fg
+# 		urgent_workspace	$red	$red	$hbg
+# 	}
+# }
 
 # window specific settings
 for_window [class="purr-data"] floating enable
 for_window [class="Qjackctl" instance="qjackctl" id=73400326] floating enable
+for_window [class="SuperCollider"] floating enable
 for_window [class="Spotify" instance="spotify"] floating enable
 for_window [class="Spotify" instance="spotify"] resize set 2000 2000
 for_window [class="Spotify" instance="spotify"] move window position center
