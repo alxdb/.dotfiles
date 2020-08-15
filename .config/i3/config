@@ -195,7 +195,7 @@ bindsym $mod+r mode "resize"
 exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 # Bar Settings
 bindsym $mod+Shift+i exec "killall -q polybar"
-bindsym $mod+Shift+d exec "polybar main" 
+bindsym $mod+Shift+d exec "polybar main"
 # bar {
 # 	mode dock
 # 	hidden_state hide
