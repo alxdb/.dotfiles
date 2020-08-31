@@ -1,0 +1,2 @@
+xsetroot -solid "#101010"
+[[ -f ~/.zsh/.zshenv ]] && source ~/.zsh/.zshenv
