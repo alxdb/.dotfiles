@@ -14,7 +14,7 @@ alias pacSu="sudo pacman -Syu"
 # this allows vcs for any file in home, kept in a repo called ~/.dotfiles
 alias dotf='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 # ignore these top level folders
-IGNORED_HOME_FOLDERS=("Bitwig\ Studio" "FiraxisLive" "ToguAudioLine")
+IGNORED_HOME_FOLDERS=("Bitwig\ Studio" "FiraxisLive" "ToguAudioLine" "Downloads")
 alias ls="command ls $(echo -I${^IGNORED_HOME_FOLDERS}) --color=auto -v"
 alias ll='ls -l -h'
 # docker-machine alias

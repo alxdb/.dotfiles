@@ -6,3 +6,8 @@
 	signingkey = 3B3175F7132A5151FDC6915313D0964DD3808231
 [diff]
 	tool = vimdiff
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true

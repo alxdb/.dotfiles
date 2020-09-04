@@ -32,7 +32,8 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(;; ----------------------------------------------------------------
+   '(
+     ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press `SPC f e R' (Vim style) or
      ;; `M-m f e R' (Emacs style) to install them.
@@ -41,8 +42,9 @@ This function should only modify configuration layer settings."
      emacs-lisp
      git
      helm
+     lsp
      markdown
-     ;; multiple-cursors
+     multiple-cursors
      org
      (shell :variables
             shell-default-height 30
@@ -51,34 +53,8 @@ This function should only modify configuration layer settings."
      version-control
      treemacs
      themes-megapack
-     lsp
-     semantic
-     ;; languages
-     (c-c++ :variables
-            c-c++-backend 'lsp-ccls
-            c-c++-enable-clang-format-on-save t
-            c-c++-lsp-enable-semantic-highlight t
-            c-c++-lsp-semantic-highlight-method 'overlay)
-     (clojure :variables
-              clojure-enable-fancify-symbols t
-              clojure-enable-linters 'clj-kondo
-              clojure-enable-clj-refactor t)
-     (cmake :variables
-            cmake-enable-cmake-ide-support t)
-     gpu
-     (haskell :variables
-              haskell-completion-backend 'lsp)
-     html
-     ipython-notebook
-     javascript
-     latex
-     python
-     rust
-     ron
-     (scala :variables
-            scala-backend 'scala-metals)
-     yaml
-     )
+     rust)
+
 
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -87,7 +63,7 @@ This function should only modify configuration layer settings."
    ;; To use a local version of a package, use the `:location' property:
    ;; '(your-package :location "~/path/to/your-package/")
    ;; Also include the dependencies as they will not be resolved automatically.
-   dotspacemacs-additional-packages '(cdlatex sage-shell-mode)
+   dotspacemacs-additional-packages '()
 
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
@@ -128,7 +104,7 @@ It should only modify the values of Spacemacs settings."
    ;; To load it when starting Emacs add the parameter `--dump-file'
    ;; when invoking Emacs 27.1 executable on the command line, for instance:
    ;;   ./emacs --dump-file=$HOME/.emacs.d/.cache/dumps/spacemacs-27.1.pdmp
-   ;; (default spacemacs-27.1.pdmp)
+   ;; (default (format "spacemacs-%s.pdmp" emacs-version))
    dotspacemacs-emacs-dumper-dump-file (format "spacemacs-%s.pdmp" emacs-version)
 
    ;; If non-nil ELPA repositories are contacted via HTTPS whenever it's
@@ -224,7 +200,8 @@ It should only modify the values of Spacemacs settings."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press `SPC T n' to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(gruvbox-dark-hard)
+   dotspacemacs-themes '(gruvbox-dark-hard
+                         gruvbox-light-medium)
 
    ;; Set the theme for the Spaceline. Supported themes are `spacemacs',
    ;; `all-the-icons', `custom', `doom', `vim-powerline' and `vanilla'. The
@@ -233,11 +210,11 @@ It should only modify the values of Spacemacs settings."
    ;; refer to the DOCUMENTATION.org for more info on how to create your own
    ;; spaceline theme. Value can be a symbol or list with additional properties.
    ;; (default '(spacemacs :separator wave :separator-scale 1.5))
-   dotspacemacs-mode-line-theme '(spacemacs :separator wave :separator-scale 1.5)
+   dotspacemacs-mode-line-theme '(spacemacs :separator slant :separator-scale 1.25)
 
    ;; If non-nil the cursor color matches the state color in GUI Emacs.
    ;; (default t)
-   dotspacemacs-colorize-cursor-according-to-state nil
+   dotspacemacs-colorize-cursor-according-to-state t
 
    ;; Default font or prioritized list of fonts.
    dotspacemacs-default-font '("Iosevka"
@@ -395,7 +372,7 @@ It should only modify the values of Spacemacs settings."
    ;;   :size-limit-kb 1000)
    ;; When used in a plist, `visual' takes precedence over `relative'.
    ;; (default nil)
-   dotspacemacs-line-numbers t
+   dotspacemacs-line-numbers nil
 
    ;; Code folding method. Possible values are `evil' and `origami'.
    ;; (default 'evil)
@@ -472,6 +449,13 @@ It should only modify the values of Spacemacs settings."
    ;; (default t)
    dotspacemacs-use-clean-aindent-mode t
 
+   ;; If non-nil shift your number row to match the entered keyboard layout
+   ;; (only in insert state). Currently supported keyboard layouts are:
+   ;; `qwerty-us', `qwertz-de' and `querty-ca-fr'.
+   ;; New layouts can be added in `spacemacs-editing' layer.
+   ;; (default nil)
+   dotspacemacs-swap-number-row nil
+
    ;; Either nil or a number of seconds. If non-nil zone out after the specified
    ;; number of seconds. (default nil)
    dotspacemacs-zone-out-when-idle nil
@@ -479,7 +463,11 @@ It should only modify the values of Spacemacs settings."
    ;; Run `spacemacs/prettify-org-buffer' when
    ;; visiting README.org files of Spacemacs.
    ;; (default nil)
-   dotspacemacs-pretty-docs nil))
+   dotspacemacs-pretty-docs nil
+
+   ;; If nil the home buffer shows the full path of agenda items
+   ;; and todos. If non nil only the file name is shown.
+   dotspacemacs-home-shorten-agenda-source nil))
 
 (defun dotspacemacs/user-env ()
   "Environment variables setup.
@@ -510,9 +498,6 @@ This function is called at the very end of Spacemacs startup, after layer
 configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
-  (spacemacs/toggle-evil-safe-lisp-structural-editing-on-register-hooks) ; enable evil-cleverparens
-  (add-hook 'org-mode-hook 'turn-on-org-cdlatex) ; cdlatex for org mode
-  (setq spacemacs-layouts-restrict-spc-tab t)
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -527,114 +512,41 @@ This function is called at the very end of Spacemacs initialization."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(ein:output-area-inlined-images t)
  '(evil-want-Y-yank-to-eol nil)
- '(helm-completion-style (quote emacs))
- '(hl-todo-keyword-faces
-   (quote
-    (("TODO" . "#dc752f")
-     ("NEXT" . "#dc752f")
-     ("THEM" . "#2d9574")
-     ("PROG" . "#4f97d7")
-     ("OKAY" . "#4f97d7")
-     ("DONT" . "#f2241f")
-     ("FAIL" . "#f2241f")
-     ("DONE" . "#86dc2f")
-     ("NOTE" . "#b1951d")
-     ("KLUDGE" . "#b1951d")
-     ("HACK" . "#b1951d")
-     ("TEMP" . "#b1951d")
-     ("FIXME" . "#dc752f")
-     ("XXX+" . "#dc752f")
-     ("\\?\\?\\?+" . "#dc752f"))))
- '(org-babel-load-languages
-   (quote
-    ((clojure . t)
-     (shell . t)
-     (emacs-lisp . t)
-     (dot . t))))
+ '(lsp-enable-semantic-highlighting t)
+ '(lsp-rust-analyzer-cargo-all-targets t)
+ '(lsp-ui-doc-enable nil)
+ '(menu-bar-mode nil)
  '(package-selected-packages
-   (quote
-    (import-js grizzl web-mode tagedit slim-mode scss-mode sass-mode pug-mode impatient-mode helm-css-scss haml-mode emmet-mode counsel-css company-web web-completion-data add-node-modules-path company-reftex company-auctex auctex-latexmk auctex yapfify yaml-mode web-beautify utop tuareg caml tide typescript-mode seeing-is-believing rvm ruby-tools ruby-test-mode ruby-refactor ruby-hash-syntax rubocopfmt rubocop rspec-mode robe rbenv rake pytest pyenv-mode py-isort prettier-js pippel pipenv pyvenv pip-requirements ocp-indent ob-elixir nodejs-repl mvn minitest meghanada maven-test-mode lsp-ui lsp-python-ms lsp-java livid-mode skewer-mode simple-httpd live-py-mode json-navigator hierarchy json-mode json-snatcher json-reformat js2-refactor js2-mode js-doc importmagic epc ctable concurrent deferred helm-pydoc helm-lsp groovy-mode groovy-imports pcache gradle-mode flycheck-ocaml merlin flycheck-mix flycheck-credo emojify emoji-cheat-sheet-plus dune cython-mode company-tern tern company-lsp company-emoji company-anaconda chruby bundler inf-ruby blacken anaconda-mode pythonic alchemist elixir-mode xterm-color vterm terminal-here shell-pop multi-term eshell-z eshell-prompt-extras esh-help lsp-haskell intero hlint-refactor hindent helm-hoogle haskell-snippets flycheck-haskell dante lcr company-ghci company-ghc ghc haskell-mode company-cabal cmm-mode attrap toml-mode racer helm-gtags ggtags flycheck-rust dap-mode lsp-treemacs bui lsp-mode dash-functional counsel-gtags counsel swiper ivy cargo markdown-mode rust-mode zenburn-theme zen-and-art-theme yasnippet-snippets ws-butler writeroom-mode winum white-sand-theme which-key volatile-highlights vi-tilde-fringe uuidgen use-package underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme treemacs-projectile treemacs-persp treemacs-magit treemacs-evil toxi-theme toc-org tao-theme tangotango-theme tango-plus-theme tango-2-theme symon symbol-overlay sunny-day-theme sublime-themes subatomic256-theme subatomic-theme string-inflection spaceline-all-the-icons spacegray-theme soothe-theme solarized-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme smeargle seti-theme reverse-theme restart-emacs rebecca-theme rainbow-delimiters railscasts-theme purple-haze-theme professional-theme popwin planet-theme phoenix-dark-pink-theme phoenix-dark-mono-theme pcre2el password-generator paradox overseer orgit organic-green-theme org-projectile org-present org-pomodoro org-mime org-download org-cliplink org-bullets org-brain open-junk-file omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noctilux-theme naquadah-theme nameless mustang-theme move-text monokai-theme monochrome-theme molokai-theme moe-theme modus-vivendi-theme modus-operandi-theme minimal-theme material-theme majapahit-theme magit-svn magit-section magit-gitflow madhat2r-theme macrostep lush-theme lorem-ipsum link-hint light-soap-theme kaolin-themes jbeans-theme jazz-theme ir-black-theme inkpot-theme indent-guide hybrid-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation heroku-theme hemisu-theme helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-org-rifle helm-org helm-mode-manager helm-make helm-ls-git helm-gitignore helm-git-grep helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme google-translate golden-ratio gnuplot gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ gandalf-theme fuzzy font-lock+ flycheck-pos-tip flycheck-package flycheck-elsa flycheck-clj-kondo flx-ido flatui-theme flatland-theme fill-column-indicator farmhouse-theme fancy-battery eziam-theme eyebrowse expand-region exotica-theme evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu espresso-theme elisp-slime-nav editorconfig dumb-jump dracula-theme dotenv-mode doom-themes django-theme diminish devdocs define-word darktooth-theme darkokai-theme darkmine-theme darkburn-theme dakrone-theme cyberpunk-theme column-enforce-mode color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized clues-theme clojure-snippets clj-refactor clean-aindent-mode cider-eval-sexp-fu chocolate-theme cherry-blossom-theme centered-cursor-mode busybee-theme bubbleberry-theme browse-at-remote birds-of-paradise-plus-theme badwolf-theme auto-yasnippet auto-highlight-symbol auto-compile apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme alect-themes aggressive-indent afternoon-theme ace-link ace-jump-helm-line ac-ispell)))
- '(powerline-default-separator (quote wave))
- '(powerline-height 39)
- '(safe-local-variable-values
-   (quote
-    ((cmake-ide-build-dir . "~/src/minirend/build/")
-     (cmake-ide-project-dir . "~/src/minirend/")
-     (cmake-ide-project-dir eval load-file-name)
-     (cmake-ide-build-dir eval
-                          (concat cmake-ide-project-dir "build/"))
-     (cmake-ide-build-dir concat cmake-ide-project-dir "build/")
-     (cmake-ide-project-dir . load-file-name)
-     (cmake-ide-project-dir function load-file-name)
-     (cmake-ide-project-dir function
-                            (or load-file-name buffer-file-name))
-     (cmake-ide-cmake-opts . "-DCMAKE_BUILD_TYPE=Debug")
-     (cmake-ide-build-dir concat cmake-ide-project-dir "/build/")
-     (cmake-ide-project-dir or load-file-name buffer-file-name)
-     (helm-ctest-dir . "build")
-     (helm-ctest-dir . cmake-ide-build-dir)
-     (eval setq projectile-project-test-cmd
-           (function helm-ctest)
-           projectile-project-compilation-cmd "cmake --build build" projectile-project-compilation-dir "build" helm-make-build-dir
-           (projectile-compilation-dir)
-           helm-ctest-dir
-           (projectile-compilation-dir))
-     (projectile-project-run-cmd . "build/examples/triangle")
-     (projectile-project-name . "Minirend")
-     (eval setq projectile-project-test-cmd
-           (function helm-ctest)
-           projectile-project-compilation-cmd
-           (function helm-make-projectile)
-           projectile-project-compilation-dir "build" helm-make-build-dir
-           (projectile-compilation-dir)
-           helm-ctest-dir
-           (projectile-compilation-dir)
-           helm-ctest-bin "ctest")
-     (eval setq projectile-project-test-cmd
-           (function helm-ctest)
-           projectile-project-compilation-cmd
-           (function helm-make-projectile)
-           projectile-project-compilation-dir "build" helm-make-build-dir
-           (projectile-compilation-dir)
-           helm-ctest-dir
-           (projectile-compilation-dir)
-           helm-ctest-bin "ctest -V")
-     (projectile-project-run-cmd . "./main")
-     (projectile-project-configure-cmd . "cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..")
-     (helm-make-arguments . "-j8")
-     (projectile-project-configure-cmd . "cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -S . -B build")
-     (projectile-project-run-cmd . "./build/main")
-     (projectile-project-name . "mae_lib")
-     (eval setq projectile-project-test-cmd
-           (function helm-ctest)
-           projectile-project-compilation-cmd
-           (function helm-make-projectile)
-           projectile-project-compilation-dir "build" helm-make-build-dir
-           (projectile-compilation-dir)
-           helm-ctest-dir
-           (projectile-compilation-dir)))))
- '(spaceline-helm-mode t)
- '(spaceline-info-mode t)
- '(writeroom-width 150))
+   '(toml-mode ron-mode racer flycheck-rust cargo rust-mode zenburn-theme zen-and-art-theme yasnippet-snippets xterm-color white-sand-theme vterm underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme treemacs-magit toxi-theme terminal-here tao-theme tangotango-theme tango-plus-theme tango-2-theme sunny-day-theme sublime-themes subatomic256-theme subatomic-theme spacegray-theme soothe-theme solarized-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme smeargle shell-pop seti-theme reverse-theme rebecca-theme railscasts-theme purple-haze-theme professional-theme planet-theme phoenix-dark-pink-theme phoenix-dark-mono-theme orgit organic-green-theme org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download org-cliplink org-brain omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noctilux-theme naquadah-theme mustang-theme multi-term monokai-theme monochrome-theme molokai-theme moe-theme modus-vivendi-theme modus-operandi-theme mmm-mode minimal-theme material-theme markdown-toc majapahit-theme magit-svn magit-section magit-gitflow magit-popup madhat2r-theme lush-theme lsp-ui lsp-treemacs light-soap-theme kaolin-themes jbeans-theme jazz-theme ir-black-theme inkpot-theme htmlize heroku-theme hemisu-theme helm-org-rifle helm-org helm-lsp lsp-mode markdown-mode dash-functional helm-gitignore helm-git-grep helm-company helm-c-yasnippet hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme gnuplot gitignore-templates gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ fringe-helper git-gutter+ gh-md gandalf-theme fuzzy flycheck-pos-tip pos-tip flatui-theme flatland-theme farmhouse-theme eziam-theme exotica-theme evil-org evil-magit magit git-commit with-editor transient espresso-theme eshell-z eshell-prompt-extras esh-help dracula-theme doom-themes django-theme darktooth-theme darkokai-theme darkmine-theme darkburn-theme dakrone-theme cyberpunk-theme company color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized clues-theme chocolate-theme autothemer cherry-blossom-theme busybee-theme bubbleberry-theme browse-at-remote birds-of-paradise-plus-theme badwolf-theme auto-yasnippet yasnippet apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme alect-themes afternoon-theme ac-ispell auto-complete ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package treemacs-projectile treemacs-persp treemacs-icons-dired treemacs-evil toc-org symon symbol-overlay string-inflection spaceline-all-the-icons restart-emacs request rainbow-delimiters popwin pcre2el password-generator paradox overseer org-superstar open-junk-file nameless move-text macrostep lorem-ipsum link-hint indent-guide hybrid-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-mode-manager helm-make helm-ls-git helm-flx helm-descbinds helm-ag google-translate golden-ratio font-lock+ flycheck-package flycheck-elsa flx-ido fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-surround evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu emr elisp-slime-nav editorconfig dumb-jump dotenv-mode diminish devdocs define-word column-enforce-mode clean-aindent-mode centered-cursor-mode auto-highlight-symbol auto-compile aggressive-indent ace-link ace-jump-helm-line))
+ '(scroll-bar-mode nil)
+ '(tool-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(hl-line ((t (:background "#282828"))))
- '(line-number ((t (:background "#1d2021" :foreground "#ebdbb2"))))
- '(line-number-current-line ((t (:background "#3c3836" :foreground "#fbf2c7"))))
- '(mode-line ((t (:background "#282828" :foreground "#ebdbb2" :box nil))))
- '(powerline-active0 ((t (:background "#7c6f64" :foreground "#fdf4c1"))))
- '(powerline-active1 ((t (:background "#1c1c1c" :foreground "#fdf4c1"))))
- '(powerline-active2 ((t (:background "#1c1c1c" :foreground "#fdf4c1"))))
- '(spaceline-python-venv ((t (:foreground "#689d6a"))))
- '(spacemacs-emacs-face ((t (:background "#83a598" :foreground "#282828" :inherit (quote mode-line)))))
- '(spacemacs-insert-face ((t (:background "#8ec07c" :foreground "#282828" :inherit (quote mode-line)))))
- '(spacemacs-lisp-face ((t (:background "#fb4934" :foreground "#282828" :inherit (quote mode-line)))))
- '(spacemacs-motion-face ((t (:background "#fabd2f" :foreground "#282828" :inherit (quote mode-line)))))
- '(spacemacs-normal-face ((t (:background "#fbf1c7" :foreground "#282828" :inherit (quote mode-line)))))
- '(spacemacs-visual-face ((t (:background "#b8bb26" :foreground "#282828" :inherit (quote mode-line))))))
+ '(mode-line ((t (:background "#32302f" :foreground "#d5c4a1" :box nil))))
+ '(mode-line-inactive ((t (:background "#1d2021" :foreground "#a89984" :box nil))))
+ '(powerline-active1 ((t (:background "#3c3836" :foreground "#fdf4c1"))))
+ '(powerline-active2 ((t (:background "#3c3836" :foreground "#fdf4c1"))))
+ '(powerline-inactive1 ((t (:background "#282828" :foreground "#a89984"))))
+ '(powerline-inactive2 ((t (:background "#1d2021" :foreground "#a89984"))))
+ '(spaceline-flycheck-error ((t (:distant-foreground "#cc241d" :foreground "#fb4934"))))
+ '(spaceline-flycheck-info ((t (:distant-foreground "#458588" :foreground "#83a598"))))
+ '(spaceline-flycheck-warning ((t (:distant-foreground "#d79921" :foreground "#fabd2f"))))
+ '(spaceline-highlight-face ((t (:background "#fabd2f" :foreground "#3c3836" :inherit 'mode-line))))
+ '(spaceline-modified ((t (:background "#83a598" :foreground "#3c3836" :inherit 'mode-line))))
+ '(spaceline-python-venv ((t (:foreground "#83a598"))))
+ '(spaceline-read-only ((t (:background "#d3869b" :foreground "#3c3836" :inherit 'mode-line))))
+ '(spaceline-unmodified ((t (:background "#fabd2f" :foreground "#3c3836" :inherit 'mode-line))))
+ '(spacemacs-emacs-face ((t (:background "#83a598" :foreground "#3c3836" :inherit 'mode-line))))
+ '(spacemacs-evilified-face ((t (:background "#afaf87" :foreground "#3c3836" :inherit 'mode-line))))
+ '(spacemacs-hybrid-face ((t (:background "#5fafaf" :foreground "#3c3836" :inherit 'mode-line))))
+ '(spacemacs-insert-face ((t (:background "#8ec07c" :foreground "#3c3836" :inherit 'mode-line))))
+ '(spacemacs-lisp-face ((t (:inherit 'spacemacs-motion-face))))
+ '(spacemacs-motion-face ((t (:background "#d3869b" :foreground "#3c3836" :inherit 'mode-line))))
+ '(spacemacs-normal-face ((t (:background "#d79921" :foreground "#3c3836" :inherit 'mode-line))))
+ '(spacemacs-replace-face ((t (:background "#d65d0e" :foreground "#3c3836" :inherit 'mode-line))))
+ '(spacemacs-visual-face ((t (:background "#a89984" :foreground "#3c3836" :inherit 'mode-line)))))
 )
