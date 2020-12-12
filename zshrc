@@ -4,10 +4,9 @@ fi
 
 path=('/usr/local/opt/coreutils/libexec/gnubin' $path)
 path=('/usr/local/opt/python@3.9/libexec/bin' $path)
-path+="$HOME/.poetry/bin"
 
 fpath+='/usr/local/share/zsh-completions'
-fpath+="$HOME/.zfunc"
+fpath+="$HOME/.zsh"
 
 autoload -Uz compinit
 compinit
