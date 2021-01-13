@@ -1,7 +1,3 @@
-if [[ ! -v TMUX ]] && [[ -v USE_TMUX ]]; then
-	exec tmux attach
-fi
-
 path=('/usr/local/opt/coreutils/libexec/gnubin' $path)
 path=('/usr/local/opt/python@3.9/libexec/bin' $path)
 
@@ -18,15 +14,6 @@ alias vi=nvim
 alias ls="ls --color=auto"
 alias ll="ls -l"
 alias la="ll -a"
-
-if [ ! -z $ALACRITTY_AUTO_THEME ]; then
-	if [ -z $(defaults read -g AppleInterfaceStyle 2>/dev/null) ]; then
-		ALACRITTY_THEME=$ALACRITTY_THEME_LIGHT
-	else
-		ALACRITTY_THEME=$ALACRITTY_THEME_DARK
-	fi
-	alacritty-colorscheme -a $ALACRITTY_THEME
-fi
 
 autoload -U promptinit
 promptinit
