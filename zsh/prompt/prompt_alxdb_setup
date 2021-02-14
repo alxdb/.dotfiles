@@ -1,0 +1,39 @@
+# vim: ft=zsh:
+
+prompt_alxdb_setup() {
+	autoload -Uz vcs_info
+
+	virtualenv_info() {
+		if [[ -n "$VIRTUAL_ENV" ]]; then
+			virtualenv_base=$(basename $VIRTUAL_ENV)
+			virtualenv_msg=" %F{8}venv:$virtualenv_base%f"
+		else
+			unset virtualenv_base
+			unset virtualenv_msg
+		fi
+	}
+
+	precmd() {
+		vcs_info
+		virtualenv_info
+		psvar[1]=$vcs_info_msg_0_
+	}
+	prompt_opts+=(subst)
+
+	zstyle ':vcs_info:*' enable git
+	zstyle ':vcs_info:git:*' check-for-changes true
+	zstyle ':vcs_info:git:*' formats ' %F{8}%s:%b%f %F{magenta}%u%f%F{cyan}%c%f'
+
+	directory='%B%F{blue}%~%f%b'
+	timestamp='%F{8}[%*]%f'
+	promptend='%B%F{8}%#%f%b '
+	errorcode='%(?..%B%F{red}%?%f%b )'
+	gitstatus='$vcs_info_msg_0_'
+	pythonenv='$virtualenv_msg'
+
+	export VIRTUAL_ENV_DISABLE_PROMPT=1
+	PROMPT="$errorcode$directory$pythonenv$gitstatus"$'\n'"$promptend"
+	RPROMPT=$timestamp
+}
+
+prompt_alxdb_setup "$@"
