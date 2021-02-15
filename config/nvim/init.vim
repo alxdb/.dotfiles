@@ -9,6 +9,7 @@ Plug 'neovimhaskell/haskell-vim'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
 Plug 'vim-airline/vim-airline'
+Plug 'sheerun/vim-polyglot'
 call plug#end()
 
 set termguicolors
@@ -19,8 +20,10 @@ set number
 autocmd FileType yaml setlocal expandtab ts=2 sw=2
 autocmd FileType javascript setlocal expandtab ts=2 sw=2
 autocmd FileType json setlocal expandtab ts=2 sw=2
+autocmd FileType jsonc setlocal expandtab ts=2 sw=2
 autocmd FileType haskell setlocal expandtab ts=2 sw=2
 
+let g:airline_powerline_fonts=1
 set bg=dark
 let g:airline_theme='gruvbox8'
 colorscheme gruvbox8_hard

@@ -26,6 +26,7 @@ alias ed=nvim
 alias ls="ls --color=auto"
 alias ll="ls -l"
 alias la="ll -a"
+alias doco=docker-compose
 
 # misc fixes
 bindkey -M viins "^?" backward-delete-char
