@@ -23,6 +23,9 @@ autocmd FileType json setlocal expandtab ts=2 sw=2
 autocmd FileType jsonc setlocal expandtab ts=2 sw=2
 autocmd FileType haskell setlocal expandtab ts=2 sw=2
 
+set spelllang=en_gb
+autocmd FileType markdown setlocal spell
+
 let g:airline_powerline_fonts=1
 set bg=dark
 let g:airline_theme='gruvbox8'
