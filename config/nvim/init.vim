@@ -26,11 +26,14 @@ autocmd FileType haskell setlocal expandtab ts=2 sw=2
 set spelllang=en_gb
 autocmd FileType markdown setlocal spell
 
+autocmd TermOpen * setlocal nonumber
+autocmd TermOpen * startinsert
+
 let g:airline_powerline_fonts=1
 set bg=dark
-let g:airline_theme='gruvbox8'
-colorscheme gruvbox8_hard
+colorscheme nord
 hi Normal guibg=NONE ctermbg=NONE
+
 
 " open config file
 nmap <silent> <leader>e :e $MYVIMRC<CR>
@@ -38,6 +41,20 @@ nmap <silent> <leader>e :e $MYVIMRC<CR>
 nmap <silent> <leader>s :so %<CR>
 " switch to parent of file
 nmap <silent> <leader>p :cd %:h<CR>
+
+" navigate with alt keys
+tnoremap <A-h> <C-\><C-N><C-w>h
+tnoremap <A-j> <C-\><C-N><C-w>j
+tnoremap <A-k> <C-\><C-N><C-w>k
+tnoremap <A-l> <C-\><C-N><C-w>l
+inoremap <A-h> <C-\><C-N><C-w>h
+inoremap <A-j> <C-\><C-N><C-w>j
+inoremap <A-k> <C-\><C-N><C-w>k
+inoremap <A-l> <C-\><C-N><C-w>l
+nnoremap <A-h> <C-w>h
+nnoremap <A-j> <C-w>j
+nnoremap <A-k> <C-w>k
+nnoremap <A-l> <C-w>l
 
 " coc settings
 runtime coc.vim
