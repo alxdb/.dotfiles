@@ -1,11 +1,11 @@
 # Path configuration for interactive shells
-path=('/usr/local/opt/coreutils/libexec/gnubin' $path)
-path=('/usr/local/opt/python@3.9/libexec/bin' $path)
-
 fpath+='/usr/local/share/zsh-completions'
 fpath+='/usr/local/share/zsh/site-functions'
 fpath+="$HOME/.zsh"
 fpath+="$HOME/.zsh/prompt"
+
+# zsh options
+setopt HIST_IGNORE_DUPS
 
 # env vars for interactive shells
 export WORDCHARS=$(echo $WORDCHARS | sed 's/\///')
@@ -20,9 +20,7 @@ promptinit
 prompt alxdb
 
 # aliases
-alias vim=nvim
 alias vi=nvim
-alias ed=nvim
 alias ls="ls --color=auto"
 alias ll="ls -l"
 alias la="ll -a"
@@ -30,6 +28,11 @@ alias doco=docker-compose
 
 # misc fixes
 bindkey -M viins "^?" backward-delete-char
+
+# use nvr if inside vim
+if [[ -n $VIM ]]; then
+	alias vi=nvr
+fi
 
 # extensions
 source '/usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh'
