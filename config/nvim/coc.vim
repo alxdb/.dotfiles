@@ -149,3 +149,10 @@ nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
 nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
+
+" coc-list extension
+" List Files
+nnoremap <silent><nowait> <space>l  :<C-u>CocList files<CR>
+" List buffers
+nnoremap <silent><nowait> <space>b  :<C-u>CocList buffers<CR>
+
