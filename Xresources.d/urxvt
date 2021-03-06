@@ -1,0 +1,20 @@
+! vim: set filetype=xdefaults :
+
+urxvt.font: xft:Iosevka:style=Regular:size=11
+urxvt.boldFont: xft:Iosevka:style=Bold:size=11
+urxvt.italicFont: xft:Iosevka:style=Italic:size=11
+urxvt.boldItalicFont: xft:Iosevka:style=Bold Italic:size=11
+
+urxvt.letterSpace: 0
+urxvt.lineSpace: 0
+urxvt.internalBorder: 12
+urxvt.cursorBlink: true
+urxvt.cursorUnderline: false
+urxvt.saveline: 2048
+urxvt.scrollBar: false
+urxvt.scrollBar_right: false
+urxvt.urgentOnBell: true
+urxvt.depth: 32
+urxvt.iso14755: false
+urxvt.perl-ext:
+urxvt.perl-ext-common:

@@ -1,0 +1,4 @@
+#include ".Xresources.d/nord"
+#include ".Xresources.d/urxvt"
+
+Xcursor.size: 32
