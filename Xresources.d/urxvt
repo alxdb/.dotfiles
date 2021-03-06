@@ -1,10 +1,5 @@
 ! vim: set filetype=xdefaults :
 
-urxvt.font: xft:Iosevka:style=Regular:size=11
-urxvt.boldFont: xft:Iosevka:style=Bold:size=11
-urxvt.italicFont: xft:Iosevka:style=Italic:size=11
-urxvt.boldItalicFont: xft:Iosevka:style=Bold Italic:size=11
-
 urxvt.letterSpace: 0
 urxvt.lineSpace: 0
 urxvt.internalBorder: 12
