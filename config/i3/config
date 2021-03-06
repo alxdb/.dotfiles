@@ -124,8 +124,7 @@ bindsym $mod+a focus parent
 # focus the child container
 bindsym $mod+Shift+a focus child
 
-# Toggle borders (build that wall! tear down that wall!)
-bindsym $mod+b border toggle
+# set default borders
 default_border pixel
 
 # Define names for default workspaces for which we configure key bindings later on.
