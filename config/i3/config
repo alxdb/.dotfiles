@@ -45,10 +45,10 @@ set $border #2C313D
 set $backgr #303743
 
 #class                   border       backgr   text         indicator
-client.focused           $border      #2e3440  $foreground  $background
+client.focused           $border      #2e3440  $foreground  $blue
 client.focused_inactive  $border      $backgr  $background  $background
 client.unfocused         $border      $backgr  $lighterbg   $background
-client.urgent            $background  #282d37  $foreground  $background
+client.urgent            $red         #282d37  $foreground  $background
 client.placeholder       $background  #282D37  $foreground  $background
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
