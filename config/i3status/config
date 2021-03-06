@@ -1,0 +1,28 @@
+general {
+	output_format = "i3bar"
+	colors = true
+	interval = 1
+}
+
+order += "disk /"
+order += "memory"
+order += "load"
+order += "time"
+
+disk "/" {
+	format = "DSK %free"
+	separator = true
+}
+
+memory {
+	format = "MEM %used"
+}
+
+load {
+	format = "CPU %5min"
+}
+
+time {
+	format = "%Y-%m-%d %H:%M:%S "
+}
+
