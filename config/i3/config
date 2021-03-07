@@ -44,16 +44,12 @@ set_from_resource $separator  i3wm.separator  $lighterbg
 set $border #2C313D
 set $backgr #303743
 
-#class                   border       backgr   text         indicator
-client.focused           $border      #2e3440  $foreground  $blue
-client.focused_inactive  $border      $backgr  $background  $background
-client.unfocused         $border      $backgr  $lighterbg   $background
-client.urgent            $red         #282d37  $foreground  $background
-client.placeholder       $background  #282D37  $foreground  $background
-
-# This font is widely installed, provides lots of unicode glyphs, right-to-left
-# text rendering and scalability on retina/hidpi displays (thanks to pango).
-#font pango:DejaVu Sans Mono 8
+#class                   border       backgr       text         indicator
+client.focused           $border      $base03      $foreground  $blue
+client.focused_inactive  $border      $background  $background  $background
+client.unfocused         $border      $background  $lighterbg   $background
+client.urgent            $red         $red         $foreground  $background
+client.placeholder       $background  $background  $foreground  $background
 
 # xss-lock grabs a logind suspend inhibit lock and will use i3lock to lock the
 # screen before suspend. Use loginctl lock-session to lock your screen.
