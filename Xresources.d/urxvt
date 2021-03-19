@@ -2,6 +2,8 @@
 
 urxvt.font: xft:monospace:size=11
 
+urxvt.fading: 0
+
 urxvt.letterSpace: 0
 urxvt.lineSpace: 0
 urxvt.internalBorder: 12
