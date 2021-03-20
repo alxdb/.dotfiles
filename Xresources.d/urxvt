@@ -15,5 +15,6 @@ urxvt.scrollBar_right: false
 urxvt.urgentOnBell: true
 urxvt.depth: 32
 urxvt.iso14755: false
+! prevents segfault on exit
 urxvt.perl-ext:
 urxvt.perl-ext-common:
