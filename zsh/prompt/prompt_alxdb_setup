@@ -25,10 +25,19 @@ prompt_alxdb_setup() {
 		fi
 	}
 
+	direnv_info() {
+		if [[ -n "$DIRENV_DIFF" ]]; then
+			direnv_prompt=' %F{8}direnv%f'
+		else
+			unset direnv_prompt
+		fi
+	}
+
 	precmd() {
 		vcs_info
 		virtualenv_info
 		nix_shell_info
+		direnv_info
 	}
 	prompt_opts+=(subst)
 
@@ -43,9 +52,10 @@ prompt_alxdb_setup() {
 	gitstatus='$vcs_info_msg_0_'
 	pythonenv='$virtualenv_msg'
 	nix_shell='$nix_shell_prompt'
+	direnv_rc='$direnv_prompt'
 
 	export VIRTUAL_ENV_DISABLE_PROMPT=1
-	PROMPT="$errorcode$directory$nix_shell$pythonenv$gitstatus"$'\n'"$promptend"
+	PROMPT="$errorcode$directory$direnv_rc$nix_shell$pythonenv$gitstatus"$'\n'"$promptend"
 	RPROMPT=$timestamp
 }
 
