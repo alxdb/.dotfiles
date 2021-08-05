@@ -1,0 +1,11 @@
+# vim: set ft=sh:
+
+if [[ -n $EMACSLOADPATH ]]; then alias vi="emacsclient -n"; else alias vi=vim; fi
+
+alias ll='ls -l'
+alias la='ll -a'
+
+alias rm='rmtrash'
+alias rmdir='rmdirtrash'
+
+alias nixsh='nix-shell --run $SHELL'
