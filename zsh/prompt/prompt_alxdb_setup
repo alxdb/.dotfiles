@@ -59,4 +59,5 @@ prompt_alxdb_setup() {
 	RPROMPT=$timestamp
 }
 
+setopt promptpercent
 prompt_alxdb_setup "$@"
