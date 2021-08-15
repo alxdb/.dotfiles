@@ -20,6 +20,7 @@ alias ls='ls --color=auto'
 alias la='ls -a --color=auto'
 alias ll='ls -lha --color=auto'
 alias vi=nvim
+alias vim=nvim
 
 bindkey -M emacs '^P' history-substring-search-up
 bindkey -M emacs '^N' history-substring-search-down
