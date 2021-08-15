@@ -1,6 +1,7 @@
 # i3 config file (v4)
 #
 # Please see https://i3wm.org/docs/userguide.html for a complete reference!
+# vim: ft=i3config ts=8 sw=8 sts=8 noexpandtab
 
 set $mod Mod4
 font pango:monospace 10
@@ -145,15 +146,15 @@ bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcu
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
-        bindsym h resize shrink width 10 px or 10 ppt
-        bindsym j resize grow height 10 px or 10 ppt
-        bindsym k resize shrink height 10 px or 10 ppt
-        bindsym l resize grow width 10 px or 10 ppt
+	bindsym h resize shrink width 10 px or 10 ppt
+	bindsym j resize grow height 10 px or 10 ppt
+	bindsym k resize shrink height 10 px or 10 ppt
+	bindsym l resize grow width 10 px or 10 ppt
 
-        # back to normal: Enter or Escape or $mod+r
-        bindsym Return mode "default"
-        bindsym Escape mode "default"
-        bindsym $mod+r mode "default"
+	# back to normal: Enter or Escape or $mod+r
+	bindsym Return mode "default"
+	bindsym Escape mode "default"
+	bindsym $mod+r mode "default"
 }
 
 bindsym $mod+r mode "resize"
@@ -161,13 +162,13 @@ bindsym $mod+r mode "resize"
 # system control mode
 set $mode_system System (e) logout, (s) suspend, (r) reboot, (Shift+s) shutdown
 mode "$mode_system" {
-    bindsym e exec --no-startup-id i3-msg exit, mode "default"
-    bindsym s exec --no-startup-id systemctl suspend, mode "default"
-    bindsym r exec --no-startup-id systemctl reboot, mode "default"
-    bindsym Shift+s exec --no-startup-id systemctl poweroff, mode "default"
+	bindsym e exec --no-startup-id i3-msg exit, mode "default"
+	bindsym s exec --no-startup-id systemctl suspend, mode "default"
+	bindsym r exec --no-startup-id systemctl reboot, mode "default"
+	bindsym Shift+s exec --no-startup-id systemctl poweroff, mode "default"
 
-    bindsym Return mode "default"
-    bindsym Escape mode "default"
+	bindsym Return mode "default"
+	bindsym Escape mode "default"
 }
 
 bindsym $mod+Pause mode "$mode_system"
@@ -175,18 +176,18 @@ bindsym $mod+Pause mode "$mode_system"
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
-  status_command i3status
+	status_command i3status
 
-  colors {
-    background $bg
-    separator  $fg-alt
-    statusline $fg
+	colors {
+		background	$bg
+		separator	$fg-alt
+		statusline	$fg
 
-    # State		Border	BG	Text
-    focused_workspace	$base6	$bg	$fg
-    active_workspace	$bg-alt	$bg	$fg
-    inactive_workspace	$bg-alt $bg	$fg
-    urgent_workspace	$red	$bg	$fg
-    binding_mode	$cyan	$bg	$fg
-  }
+		# State			Border	BG	Text
+		focused_workspace	$base6	$bg	$fg
+		active_workspace	$bg-alt	$bg	$fg
+		inactive_workspace	$bg-alt $bg	$fg
+		urgent_workspace	$red	$bg	$fg
+		binding_mode		$base6	$bg	$fg
+	}
 }

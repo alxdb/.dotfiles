@@ -1,6 +1,7 @@
 call plug#begin(stdpath('data') . '/plugged')
 Plug 'joshdick/onedark.vim'
 Plug 'itchyny/lightline.vim'
+Plug 'mboughaba/i3config.vim'
 call plug#end()
 
 set noshowmode
