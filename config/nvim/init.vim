@@ -16,10 +16,8 @@ set termguicolors
 set ts=4 sw=4
 set list
 set number
+set hidden
 
-autocmd FileType yaml setlocal expandtab ts=2 sw=2
-autocmd FileType javascript setlocal expandtab ts=2 sw=2
-autocmd FileType json setlocal expandtab ts=2 sw=2
 autocmd FileType jsonc setlocal expandtab ts=2 sw=2
 autocmd FileType haskell setlocal expandtab ts=2 sw=2
 
@@ -34,6 +32,8 @@ set bg=dark
 colorscheme nord
 hi Normal guibg=NONE ctermbg=NONE
 
+nnoremap <space> <nop>
+let mapleader=" "
 
 " open config file
 nmap <silent> <leader>e :e $MYVIMRC<CR>
@@ -55,7 +55,4 @@ nnoremap <A-h> <C-w>h
 nnoremap <A-j> <C-w>j
 nnoremap <A-k> <C-w>k
 nnoremap <A-l> <C-w>l
-
-" coc settings
-runtime coc.vim
 

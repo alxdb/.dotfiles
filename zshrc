@@ -4,37 +4,49 @@ fpath+='/usr/local/share/zsh/site-functions'
 fpath+="$HOME/.zsh"
 fpath+="$HOME/.zsh/prompt"
 
-# zsh options
+# Zsh options
 setopt HIST_IGNORE_DUPS
 
-# env vars for interactive shells
+# Env vars for interactive shells
 export WORDCHARS=$(echo $WORDCHARS | sed 's/\///')
 export BAT_THEME=Nord
 
-# zsh autoloads
+# Zsh autoloads
 autoload -Uz compinit promptinit
 compinit
 promptinit
 
-# prompt
+# Prompt
 prompt alxdb
 
-# aliases
+# Aliases
 alias vi=nvim
+alias vim=nvim
 alias ls="ls --color=auto"
 alias ll="ls -l"
 alias la="ll -a"
 alias doco=docker-compose
 
-# misc fixes
+# Misc fixes
 bindkey -M viins "^?" backward-delete-char
 
-# use nvr if inside vim
+# Use nvr if inside vim
 if [[ -n $VIM ]]; then
 	alias vi=nvr
 fi
+if [[ -n $EMACS_VTERM_PATH ]]; then
+	alias vi="emacsclient -n"
+fi
 
-# extensions
+# Always use meta keys for movement
+bindkey "ƒ" forward-word
+bindkey "∫" backward-word
+bindkey "∂" kill-word
+
+# Direnv hook
+eval "$(direnv hook zsh)"
+
+# Extensions
 source '/usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh'
 source '/usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh'
 source '/usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh'
